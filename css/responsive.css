@@ -1,0 +1,1952 @@
+/* =========================================================
+   Robot Academy
+   響應式版面與裝置調整
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   大型筆電與小型桌面
+   1280px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 80rem) {
+    .app-content {
+        padding: var(--space-6);
+    }
+
+    .topbar {
+        padding-inline: var(--space-6);
+    }
+
+    .app-footer {
+        padding-inline: var(--space-6);
+    }
+
+    .content-layout {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(15rem, 19rem);
+    }
+
+    .content-layout--left {
+        grid-template-columns:
+            minmax(15rem, 19rem)
+            minmax(0, 1fr);
+    }
+
+    .content-layout--wide-sidebar {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(18rem, 22rem);
+    }
+
+    .dashboard-hero {
+        min-height: 16rem;
+        padding: var(--space-7);
+    }
+
+    .dashboard-hero__title,
+    .course-detail-hero__title,
+    .auth-visual__title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .dashboard-hero__visual {
+        width: 13rem;
+        height: 13rem;
+    }
+
+    .dashboard-hero__robot {
+        width: 9rem;
+        height: 9rem;
+    }
+
+    .dashboard-hero__robot svg {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .quick-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .achievement-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+
+/* ---------------------------------------------------------
+   中型桌面與平板橫向
+   1152px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 72rem) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-grid {
+        grid-template-columns:
+            minmax(0, 1.6fr)
+            minmax(16rem, 1fr);
+    }
+
+    .course-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid--4,
+    .grid--5 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .result-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .leaderboard-podium {
+        padding-inline: var(--space-5);
+    }
+
+    .auth-layout {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(25rem, 42%);
+    }
+
+    .auth-layout__visual {
+        padding: var(--space-8);
+    }
+
+    .lesson-layout {
+        grid-template-columns: 17rem minmax(0, 1fr);
+    }
+
+    .lesson-content {
+        padding: var(--space-6);
+    }
+
+    .quiz-layout {
+        grid-template-columns: minmax(0, 1fr) 16rem;
+    }
+
+    .question-map {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   平板與行動版側邊欄切換
+   1024px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 64rem) {
+    .app-layout {
+        display: block;
+    }
+
+    .sidebar {
+        width: min(
+            var(--sidebar-width, 17.5rem),
+            calc(100vw - 3rem)
+        );
+        transform: translateX(-105%);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .app-layout.is-sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .app-main,
+    .app-layout.is-sidebar-collapsed .app-main {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar {
+        width: min(
+            var(--sidebar-width, 17.5rem),
+            calc(100vw - 3rem)
+        );
+        transform: translateX(-105%);
+    }
+
+    .app-layout.is-sidebar-open.is-sidebar-collapsed .sidebar {
+        transform: translateX(0);
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar__header {
+        justify-content: space-between;
+        padding-inline: var(--space-5);
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar__brand {
+        justify-content: flex-start;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar__brand-text,
+    .app-layout.is-sidebar-collapsed .sidebar__collapse,
+    .app-layout.is-sidebar-collapsed .sidebar-nav__title,
+    .app-layout.is-sidebar-collapsed .sidebar-nav__text,
+    .app-layout.is-sidebar-collapsed .sidebar-nav__badge,
+    .app-layout.is-sidebar-collapsed .sidebar-nav__arrow,
+    .app-layout.is-sidebar-collapsed .sidebar-profile__content,
+    .app-layout.is-sidebar-collapsed .sidebar-profile__action {
+        display: initial;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar__brand-text {
+        display: block;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar__collapse,
+    .app-layout.is-sidebar-collapsed .sidebar-nav__badge,
+    .app-layout.is-sidebar-collapsed .sidebar-nav__arrow,
+    .app-layout.is-sidebar-collapsed .sidebar-profile__action {
+        display: inline-flex;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar-nav__title {
+        display: block;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar-nav__text,
+    .app-layout.is-sidebar-collapsed .sidebar-profile__content {
+        display: block;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar__body {
+        padding: var(--space-4);
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar-nav__section {
+        gap: var(--space-2);
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar-nav__link {
+        width: 100%;
+        justify-content: flex-start;
+        margin-inline: 0;
+        padding: 0 var(--space-3);
+    }
+
+    .app-layout.is-sidebar-collapsed
+    .sidebar-nav__link.is-active::before,
+    .app-layout.is-sidebar-collapsed
+    .sidebar-nav__link[aria-current="page"]::before {
+        display: block;
+    }
+
+    .app-layout.is-sidebar-collapsed
+    .sidebar-nav__item.is-expanded
+    .sidebar-nav__submenu {
+        display: grid;
+    }
+
+    .app-layout.is-sidebar-collapsed .sidebar-profile {
+        justify-content: flex-start;
+        padding: var(--space-2);
+    }
+
+    .topbar__menu-button {
+        display: inline-flex;
+    }
+
+    .topbar-user__content {
+        display: none;
+    }
+
+    .content-layout,
+    .content-layout--left,
+    .content-layout--wide-sidebar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .content-layout--left .content-layout__aside {
+        order: 2;
+    }
+
+    .content-layout--left .content-layout__main {
+        order: 1;
+    }
+
+    .sticky-panel {
+        position: static;
+    }
+
+    .dashboard-grid,
+    .dashboard-grid--equal {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-stack {
+        gap: var(--space-5);
+    }
+
+    .learning-objectives {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .achievement-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .settings-layout {
+        grid-template-columns: 13rem minmax(0, 1fr);
+    }
+
+    .profile-header__body {
+        padding-inline: var(--space-5);
+    }
+
+    .leaderboard-row {
+        grid-template-columns:
+            2.5rem
+            minmax(0, 1fr)
+            auto
+            auto;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   小型平板
+   896px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 56rem) {
+    .auth-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auth-layout__visual {
+        min-height: auto;
+        padding: var(--space-7);
+    }
+
+    .auth-layout__content {
+        min-height: auto;
+        padding: var(--space-8) var(--space-6);
+    }
+
+    .auth-visual__content {
+        max-width: 44rem;
+    }
+
+    .auth-visual__features {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .lesson-layout {
+        display: block;
+        min-height: calc(
+            100vh -
+            var(--topbar-height, 4.5rem)
+        );
+    }
+
+    .lesson-sidebar {
+        position: fixed;
+        top: var(--topbar-height, 4.5rem);
+        bottom: 0;
+        left: 0;
+        z-index: var(--z-sidebar, 100);
+        width: min(20rem, calc(100vw - 3rem));
+        height: auto;
+        box-shadow: var(--shadow-lg);
+        transform: translateX(-105%);
+        transition:
+            transform
+            var(--duration-normal)
+            var(--ease-emphasized);
+    }
+
+    .lesson-layout.is-sidebar-open .lesson-sidebar {
+        transform: translateX(0);
+    }
+
+    .lesson-sidebar-toggle {
+        display: inline-flex;
+    }
+
+    .lesson-overlay {
+        position: fixed;
+        top: var(--topbar-height, 4.5rem);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: calc(var(--z-sidebar, 100) - 1);
+        display: block;
+        background: var(--color-backdrop);
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition-opacity);
+        backdrop-filter: blur(0.25rem);
+    }
+
+    .lesson-layout.is-sidebar-open .lesson-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .lesson-content {
+        width: 100%;
+    }
+
+    .quiz-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .quiz-sidebar {
+        position: static;
+        order: -1;
+    }
+
+    .question-map {
+        grid-template-columns: repeat(10, 1fr);
+    }
+
+    .quiz-timer {
+        padding-bottom: var(--space-4);
+    }
+
+    .question-map__legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    .settings-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .settings-nav {
+        position: static;
+        display: flex;
+        gap: var(--space-2);
+        overflow-x: auto;
+        padding: var(--space-2);
+        scrollbar-width: thin;
+    }
+
+    .settings-nav li {
+        flex: 0 0 auto;
+    }
+
+    .settings-nav__link {
+        padding-inline: var(--space-4);
+        white-space: nowrap;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   一般平板與大型手機
+   768px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 48rem) {
+    .app-content {
+        padding: var(--space-5);
+    }
+
+    .topbar {
+        gap: var(--space-3);
+        padding-inline: var(--space-5);
+    }
+
+    .topbar__left {
+        gap: var(--space-3);
+    }
+
+    .topbar__right {
+        gap: var(--space-2);
+    }
+
+    .topbar-search {
+        width: min(100%, 17rem);
+    }
+
+    .topbar-search__shortcut {
+        display: none;
+    }
+
+    .topbar-search__input {
+        padding-right: var(--space-4);
+    }
+
+    .page-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: var(--space-5);
+        margin-bottom: var(--space-6);
+    }
+
+    .page-header__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .page-header__actions {
+        justify-content: flex-start;
+    }
+
+    .section {
+        margin-top: var(--space-7);
+    }
+
+    .section-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .section-header__actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .grid--3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-hero {
+        min-height: auto;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: var(--space-6);
+    }
+
+    .dashboard-hero__content {
+        max-width: none;
+    }
+
+    .dashboard-hero__title {
+        max-width: none;
+        font-size: var(--font-size-3xl);
+    }
+
+    .dashboard-hero__visual {
+        align-self: center;
+        width: 12rem;
+        height: 12rem;
+    }
+
+    .dashboard-hero__robot {
+        width: 8rem;
+        height: 8rem;
+    }
+
+    .dashboard-hero__robot svg {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+
+    .continue-course {
+        grid-template-columns: 8rem minmax(0, 1fr);
+    }
+
+    .course-detail-hero {
+        padding: var(--space-6);
+    }
+
+    .course-detail-hero__title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .course-detail-hero__description {
+        font-size: var(--font-size-base);
+    }
+
+    .course-detail-hero__meta {
+        gap: var(--space-3) var(--space-5);
+    }
+
+    .lesson-content {
+        padding: var(--space-5);
+    }
+
+    .lesson-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .lesson-header__actions {
+        justify-content: flex-start;
+    }
+
+    .lesson-navigation {
+        flex-direction: column;
+    }
+
+    .lesson-navigation__link {
+        width: 100%;
+        max-width: none;
+    }
+
+    .lesson-navigation__link--next {
+        margin-left: 0;
+    }
+
+    .quiz-panel__body {
+        padding: var(--space-6);
+    }
+
+    .quiz-question__title {
+        font-size: var(--font-size-xl);
+    }
+
+    .question-map {
+        grid-template-columns: repeat(8, 1fr);
+    }
+
+    .result-hero {
+        padding: var(--space-7) var(--space-5);
+    }
+
+    .result-score {
+        font-size: var(--font-size-4xl);
+    }
+
+    .leaderboard-podium {
+        min-height: 19rem;
+        gap: var(--space-3);
+        padding: var(--space-6) var(--space-4);
+    }
+
+    .podium-item {
+        padding-inline: var(--space-3);
+    }
+
+    .podium-item--first {
+        min-height: 15rem;
+    }
+
+    .podium-item--second {
+        min-height: 12rem;
+    }
+
+    .podium-item--third {
+        min-height: 11rem;
+    }
+
+    .leaderboard-row {
+        grid-template-columns:
+            2.5rem
+            minmax(0, 1fr)
+            auto;
+    }
+
+    .leaderboard-row__change {
+        display: none;
+    }
+
+    .achievement-summary {
+        align-items: flex-start;
+    }
+
+    .profile-header__body {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-inline: var(--space-4);
+    }
+
+    .profile-header__actions {
+        width: 100%;
+        padding-bottom: 0;
+    }
+
+    .profile-header__actions .btn {
+        flex: 1;
+    }
+
+    .settings-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .settings-row__control {
+        align-self: flex-start;
+    }
+
+    .notification-item {
+        padding: var(--space-4);
+    }
+
+    .search-result {
+        padding: var(--space-4);
+    }
+
+    .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .toolbar__left,
+    .toolbar__right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .toolbar__search {
+        width: 100%;
+    }
+
+    .filter-bar__item {
+        min-width: calc(50% - var(--space-2));
+    }
+
+    .app-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: var(--space-5);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   大型手機
+   640px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 40rem) {
+    :root {
+        --topbar-height: 4rem;
+    }
+
+    .app-content {
+        padding: var(--space-4);
+    }
+
+    .topbar {
+        min-height: var(--topbar-height, 4rem);
+        padding-inline: var(--space-4);
+    }
+
+    .topbar__heading {
+        font-size: var(--font-size-base);
+    }
+
+    .topbar__subtitle {
+        display: none;
+    }
+
+    .topbar-search {
+        display: none;
+    }
+
+    .topbar-user {
+        padding: 0;
+    }
+
+    .topbar-user__arrow {
+        display: none;
+    }
+
+    .topbar-action .icon-btn,
+    .topbar__menu-button {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .page-header__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .page-header__actions .btn {
+        width: 100%;
+    }
+
+    .section-header__actions {
+        flex-wrap: wrap;
+    }
+
+    .section-header__actions .btn {
+        flex: 1;
+    }
+
+    .stats-grid {
+        gap: var(--space-3);
+    }
+
+    .stat-card {
+        padding: var(--space-4);
+    }
+
+    .stat-card__value {
+        font-size: var(--font-size-2xl);
+    }
+
+    .stat-card__icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .stat-card__icon svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .quick-actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-hero {
+        padding: var(--space-5);
+    }
+
+    .dashboard-hero__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .dashboard-hero__description {
+        font-size: var(--font-size-sm);
+    }
+
+    .dashboard-hero__actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .dashboard-hero__actions .btn {
+        width: 100%;
+    }
+
+    .dashboard-hero__visual {
+        width: 10rem;
+        height: 10rem;
+    }
+
+    .dashboard-hero__robot {
+        width: 7rem;
+        height: 7rem;
+    }
+
+    .dashboard-hero__robot svg {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .continue-course {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .continue-course__cover {
+        aspect-ratio: 16 / 9;
+        min-height: 0;
+    }
+
+    .bar-chart {
+        gap: var(--space-2);
+    }
+
+    .bar-chart__track {
+        width: min(100%, 1.75rem);
+    }
+
+    .course-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .course-card--horizontal {
+        display: flex;
+    }
+
+    .course-card--horizontal .course-card__cover {
+        aspect-ratio: 16 / 9;
+    }
+
+    .course-card--horizontal .course-card__footer {
+        grid-column: auto;
+    }
+
+    .course-detail-hero {
+        padding: var(--space-5);
+    }
+
+    .course-detail-hero__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .course-detail-hero__meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .course-detail-hero__instructor {
+        align-items: flex-start;
+    }
+
+    .course-enroll-card__body {
+        padding: var(--space-5);
+    }
+
+    .learning-objectives {
+        padding: var(--space-5);
+    }
+
+    .curriculum-section__header,
+    .curriculum-lesson {
+        padding-inline: var(--space-4);
+    }
+
+    .curriculum-lesson {
+        align-items: flex-start;
+    }
+
+    .curriculum-lesson__status {
+        display: none;
+    }
+
+    .lesson-content {
+        padding: var(--space-4);
+    }
+
+    .lesson-header__title {
+        font-size: var(--font-size-xl);
+    }
+
+    .lesson-header__meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .lesson-article {
+        padding-block: var(--space-6);
+    }
+
+    .lesson-article h2 {
+        font-size: var(--font-size-xl);
+    }
+
+    .lesson-article h3 {
+        font-size: var(--font-size-lg);
+    }
+
+    .lesson-article pre {
+        padding: var(--space-4);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-xs);
+    }
+
+    .lesson-callout {
+        padding: var(--space-4);
+    }
+
+    .quiz-panel {
+        border-radius: var(--radius-xl);
+    }
+
+    .quiz-panel__header,
+    .quiz-panel__footer {
+        padding: var(--space-4);
+    }
+
+    .quiz-panel__body {
+        padding: var(--space-5) var(--space-4);
+    }
+
+    .quiz-panel__footer {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .quiz-panel__footer .btn {
+        width: 100%;
+    }
+
+    .quiz-sidebar {
+        padding: var(--space-4);
+    }
+
+    .question-map {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .question-map__legend {
+        display: grid;
+        gap: var(--space-2);
+    }
+
+    .result-hero__icon {
+        width: 4rem;
+        height: 4rem;
+        box-shadow: 0 0 0 0.75rem var(--color-success-soft);
+    }
+
+    .result-hero__icon svg {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .result-hero__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .result-hero__actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .result-hero__actions .btn {
+        width: 100%;
+    }
+
+    .result-stat {
+        padding: var(--space-4);
+    }
+
+    .leaderboard-podium {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+        min-height: auto;
+        gap: var(--space-4);
+    }
+
+    .podium-item,
+    .podium-item--first,
+    .podium-item--second,
+    .podium-item--third {
+        min-height: 0;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: var(--space-4);
+        padding: var(--space-4);
+        border-radius: var(--radius-xl);
+        text-align: left;
+    }
+
+    .podium-item--first {
+        order: 1;
+    }
+
+    .podium-item--second {
+        order: 2;
+    }
+
+    .podium-item--third {
+        order: 3;
+    }
+
+    .podium-item__rank {
+        position: static;
+        flex: 0 0 auto;
+    }
+
+    .podium-item__avatar {
+        flex: 0 0 auto;
+        margin-top: 0;
+    }
+
+    .podium-item__crown {
+        top: var(--space-3);
+        right: var(--space-3);
+    }
+
+    .podium-item__crown svg {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    .podium-item__name {
+        margin-top: 0;
+    }
+
+    .leaderboard-row {
+        grid-template-columns:
+            2rem
+            minmax(0, 1fr)
+            auto;
+        gap: var(--space-3);
+        padding: var(--space-4);
+    }
+
+    .leaderboard-row__points {
+        min-width: auto;
+        font-size: var(--font-size-sm);
+    }
+
+    .achievement-summary {
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .achievement-summary__icon {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .achievement-summary__icon svg {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .achievement-grid {
+        gap: var(--space-3);
+    }
+
+    .achievement-card {
+        padding: var(--space-4);
+    }
+
+    .profile-header__cover {
+        height: 10rem;
+    }
+
+    .profile-header__body {
+        align-items: center;
+        margin-top: -3rem;
+        text-align: center;
+    }
+
+    .profile-header__identity {
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        gap: var(--space-3);
+    }
+
+    .profile-header__avatar {
+        width: 6rem;
+        height: 6rem;
+    }
+
+    .profile-header__info {
+        padding-bottom: 0;
+    }
+
+    .profile-meta {
+        justify-content: center;
+    }
+
+    .profile-stats {
+        gap: var(--space-2);
+    }
+
+    .profile-stat {
+        padding: var(--space-3);
+    }
+
+    .settings-section__header,
+    .settings-section__body {
+        padding: var(--space-5);
+    }
+
+    .settings-section__footer {
+        align-items: stretch;
+        flex-direction: column-reverse;
+        padding: var(--space-4) var(--space-5);
+    }
+
+    .settings-section__footer .btn {
+        width: 100%;
+    }
+
+    .notification-item__actions {
+        align-items: flex-end;
+        flex-direction: column;
+    }
+
+    .search-result__icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .filter-bar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .filter-bar__item {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .filter-bar__actions {
+        width: 100%;
+    }
+
+    .filter-bar__actions .btn {
+        flex: 1;
+    }
+
+    .table th,
+    .table td {
+        padding: var(--space-3);
+    }
+
+    .auth-layout__visual {
+        padding: var(--space-6) var(--space-5);
+    }
+
+    .auth-layout__content {
+        padding: var(--space-7) var(--space-5);
+    }
+
+    .auth-visual__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .auth-visual__description {
+        font-size: var(--font-size-base);
+    }
+
+    .auth-visual__features {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-3);
+    }
+
+    .auth-card__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .error-page {
+        padding: var(--space-5);
+    }
+
+    .error-page__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .error-page__actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .error-page__actions .btn {
+        width: 100%;
+    }
+
+    .pagination {
+        gap: var(--space-1);
+    }
+
+    .pagination__item,
+    .pagination__ellipsis {
+        min-width: 2.25rem;
+        height: 2.25rem;
+        padding-inline: var(--space-2);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   小型手機
+   480px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 30rem) {
+    .sidebar {
+        width: calc(100vw - 2rem);
+    }
+
+    .sidebar__header {
+        padding-inline: var(--space-4);
+    }
+
+    .sidebar__body,
+    .sidebar__footer {
+        padding: var(--space-3);
+    }
+
+    .topbar__title {
+        max-width: 9rem;
+    }
+
+    .topbar__right {
+        gap: var(--space-1);
+    }
+
+    .page-header__title {
+        font-size: var(--font-size-xl);
+    }
+
+    .page-header__actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .grid--2,
+    .grid--3,
+    .grid--4,
+    .grid--5 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stats-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .stat-card {
+        align-items: center;
+    }
+
+    .quick-action {
+        padding: var(--space-4);
+    }
+
+    .dashboard-hero {
+        padding: var(--space-4);
+    }
+
+    .dashboard-hero__eyebrow {
+        font-size: var(--font-size-xs);
+    }
+
+    .dashboard-hero__visual {
+        width: 8rem;
+        height: 8rem;
+    }
+
+    .dashboard-hero__robot {
+        width: 5.75rem;
+        height: 5.75rem;
+        box-shadow:
+            0 0 0 0.75rem var(--color-primary-soft),
+            var(--shadow-primary);
+    }
+
+    .dashboard-hero__robot svg {
+        width: 3.25rem;
+        height: 3.25rem;
+    }
+
+    .learning-chart__summary {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bar-chart {
+        min-height: 11rem;
+    }
+
+    .course-card__body {
+        padding: var(--space-4);
+    }
+
+    .course-card__footer {
+        padding-inline: var(--space-4);
+    }
+
+    .course-card__title {
+        font-size: var(--font-size-base);
+    }
+
+    .category-button {
+        padding-inline: var(--space-3);
+    }
+
+    .course-detail-hero__badges {
+        margin-bottom: var(--space-3);
+    }
+
+    .course-detail-hero__title {
+        font-size: var(--font-size-xl);
+    }
+
+    .course-enroll-card__price {
+        font-size: var(--font-size-2xl);
+    }
+
+    .curriculum-section__header {
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .curriculum-lesson__icon {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    .lesson-player {
+        border-radius: var(--radius-lg);
+    }
+
+    .lesson-player__button {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .lesson-player__button svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .answer-option__marker {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    .quiz-question__title {
+        font-size: var(--font-size-lg);
+    }
+
+    .quiz-feedback {
+        padding: var(--space-3);
+    }
+
+    .result-stats {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .result-hero {
+        padding-inline: var(--space-4);
+    }
+
+    .achievement-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .achievement-card {
+        display: grid;
+        grid-template-columns: 3.5rem minmax(0, 1fr);
+        gap: var(--space-3);
+        text-align: left;
+    }
+
+    .achievement-card__icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        grid-row: 1 / 4;
+    }
+
+    .achievement-card__icon svg {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    .achievement-card__title,
+    .achievement-card__description,
+    .achievement-card__date {
+        margin-top: 0;
+    }
+
+    .profile-header__actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .profile-stats {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-stat {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+    }
+
+    .profile-stat__label {
+        margin-top: 0;
+    }
+
+    .notification-item {
+        gap: var(--space-3);
+    }
+
+    .notification-item__icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .notification-item__actions {
+        display: none;
+    }
+
+    .search-result {
+        gap: var(--space-3);
+    }
+
+    .search-result__icon {
+        display: none;
+    }
+
+    .list-item {
+        align-items: flex-start;
+        gap: var(--space-3);
+        padding-inline: var(--space-3);
+    }
+
+    .list-item__meta {
+        display: none;
+    }
+
+    .auth-social {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .auth-options {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .auth-layout__visual {
+        padding: var(--space-5) var(--space-4);
+    }
+
+    .auth-layout__content {
+        padding: var(--space-6) var(--space-4);
+    }
+
+    .auth-visual__features {
+        display: none;
+    }
+
+    .auth-brand__logo {
+        width: 2.625rem;
+        height: 2.625rem;
+    }
+
+    .search-summary {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pagination__item:nth-of-type(n + 5):not(:last-child) {
+        display: none;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   極小螢幕
+   360px 以下
+--------------------------------------------------------- */
+
+@media (max-width: 22.5rem) {
+    .app-content {
+        padding-inline: var(--space-3);
+    }
+
+    .topbar {
+        padding-inline: var(--space-3);
+    }
+
+    .topbar__title {
+        max-width: 7rem;
+    }
+
+    .topbar-action:not(:first-child) {
+        display: none;
+    }
+
+    .card__header,
+    .card__body,
+    .card__footer {
+        padding-inline: var(--space-4);
+    }
+
+    .dashboard-hero__title {
+        font-size: var(--font-size-xl);
+    }
+
+    .stat-card__meta {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .course-card__meta {
+        gap: var(--space-2);
+    }
+
+    .course-card__footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .course-detail-hero {
+        padding: var(--space-4);
+    }
+
+    .quiz-timer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .question-map {
+        gap: var(--space-1);
+    }
+
+    .leaderboard-row {
+        grid-template-columns: 1.75rem minmax(0, 1fr);
+    }
+
+    .leaderboard-row__points {
+        grid-column: 2;
+        text-align: left;
+    }
+
+    .podium-item {
+        gap: var(--space-3);
+    }
+
+    .profile-header__avatar {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .filter-bar__actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .settings-nav__link {
+        padding-inline: var(--space-3);
+    }
+
+    .toast-container {
+        right: var(--space-2);
+        left: var(--space-2);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   低高度橫向手機
+--------------------------------------------------------- */
+
+@media (max-height: 32rem) and (orientation: landscape) {
+    .sidebar__header {
+        min-height: 3.75rem;
+    }
+
+    .sidebar__footer {
+        padding-block: var(--space-2);
+    }
+
+    .sidebar-profile__role {
+        display: none;
+    }
+
+    .modal {
+        max-height: calc(100vh - 1rem);
+    }
+
+    .auth-layout__visual {
+        min-height: auto;
+    }
+
+    .auth-layout__content {
+        min-height: 100vh;
+        padding-block: var(--space-5);
+    }
+
+    .lesson-sidebar {
+        top: var(--topbar-height, 4rem);
+    }
+
+    .error-page {
+        min-height: 100vh;
+        padding-block: var(--space-4);
+    }
+
+    .error-page__code {
+        font-size: 5rem;
+    }
+
+    .error-page__title {
+        margin-top: var(--space-4);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   觸控裝置
+--------------------------------------------------------- */
+
+@media (hover: none) and (pointer: coarse) {
+    .btn,
+    .icon-btn,
+    .sidebar-nav__link,
+    .category-button,
+    .pagination__item {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:hover,
+    .icon-btn:hover,
+    .card--interactive:hover,
+    .stat-card:hover,
+    .quick-action:hover,
+    .continue-course:hover,
+    .course-card:hover,
+    .achievement-card:hover,
+    .search-result:hover {
+        box-shadow: inherit;
+        transform: none;
+    }
+
+    .course-card:hover .course-card__cover img {
+        transform: none;
+    }
+
+    .tooltip::after {
+        display: none;
+    }
+
+    .sidebar-nav__link,
+    .dropdown-item,
+    .settings-nav__link {
+        min-height: 2.75rem;
+    }
+
+    .answer-option {
+        min-height: 3.5rem;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   高解析度螢幕
+--------------------------------------------------------- */
+
+@media (min-resolution: 2dppx) {
+    .sidebar,
+    .topbar,
+    .card,
+    .course-card,
+    .quiz-panel,
+    .settings-section {
+        border-width: max(0.5px, var(--border-width));
+    }
+}
+
+
+/* ---------------------------------------------------------
+   減少透明效果
+--------------------------------------------------------- */
+
+@media (prefers-reduced-transparency: reduce) {
+    .topbar,
+    .dropdown-menu,
+    .modal-backdrop,
+    .modal,
+    .toast,
+    .course-card__bookmark,
+    .course-enroll-card__play,
+    .lesson-player__button {
+        backdrop-filter: none;
+    }
+
+    .topbar,
+    .dropdown-menu,
+    .modal,
+    .toast {
+        background: var(--color-surface-elevated);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   深色模式系統偏好備援
+--------------------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+        color-scheme: dark;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    html:not([data-theme]) {
+        color-scheme: light;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   列印模式
+--------------------------------------------------------- */
+
+@media print {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        transition: none !important;
+    }
+
+    html,
+    body {
+        min-width: 0;
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    body {
+        font-size: 11pt;
+    }
+
+    a {
+        color: #000000;
+        text-decoration: underline;
+    }
+
+    a[href^="http"]::after {
+        margin-left: 0.25rem;
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        word-break: break-all;
+    }
+
+    .sidebar,
+    .sidebar-overlay,
+    .topbar,
+    .app-footer,
+    .page-header__actions,
+    .section-header__actions,
+    .toolbar,
+    .filter-bar,
+    .btn,
+    .icon-btn,
+    .dropdown-menu,
+    .toast-container,
+    .modal-backdrop,
+    .course-card__bookmark,
+    .course-enroll-card__play,
+    .lesson-sidebar,
+    .lesson-overlay,
+    .lesson-sidebar-toggle,
+    .lesson-player__button,
+    .quiz-sidebar,
+    .pagination {
+        display: none !important;
+    }
+
+    .app-main,
+    .app-layout.is-sidebar-collapsed .app-main {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    .app-content {
+        min-height: auto;
+        padding: 0;
+    }
+
+    .content-container,
+    .content-container--sm,
+    .content-container--md,
+    .content-container--lg {
+        max-width: none;
+    }
+
+    .page-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .page-header__title {
+        color: #000000;
+        font-size: 24pt;
+    }
+
+    .page-header__description,
+    .section-header__description,
+    .lesson-article,
+    .course-detail-hero__description {
+        color: #222222;
+    }
+
+    .card,
+    .stat-card,
+    .course-card,
+    .quiz-panel,
+    .settings-section,
+    .notification-list,
+    .leaderboard-list,
+    .achievement-card,
+    .search-result {
+        break-inside: avoid;
+        border: 1px solid #cccccc;
+        background: #ffffff !important;
+    }
+
+    .dashboard-hero,
+    .course-detail-hero,
+    .result-hero,
+    .leaderboard-podium,
+    .achievement-summary {
+        break-inside: avoid;
+        border: 1px solid #cccccc;
+        background: #ffffff !important;
+    }
+
+    .grid,
+    .stats-grid,
+    .course-grid,
+    .achievement-grid,
+    .result-stats {
+        display: block;
+    }
+
+    .grid > *,
+    .stats-grid > *,
+    .course-grid > *,
+    .achievement-grid > *,
+    .result-stats > * {
+        margin-bottom: 1rem;
+    }
+
+    .lesson-layout {
+        display: block;
+    }
+
+    .lesson-content {
+        padding: 0;
+    }
+
+    .lesson-player {
+        display: none;
+    }
+
+    .lesson-article {
+        padding: 0;
+    }
+
+    .lesson-article pre {
+        overflow: visible;
+        border: 1px solid #cccccc;
+        background: #f5f5f5;
+        color: #000000;
+        white-space: pre-wrap;
+    }
+
+    .table-wrapper {
+        overflow: visible;
+        border: 0;
+    }
+
+    .table {
+        min-width: 0;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #cccccc;
+        color: #000000;
+    }
+
+    .progress__track {
+        border: 1px solid #999999;
+        background: #eeeeee;
+    }
+
+    .progress__bar {
+        background: #555555 !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 1.5cm;
+    }
+}
