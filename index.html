@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#07090f">
+    <meta
+        name="description"
+        content="Robot Academy 智慧機器人學習平台"
+    >
+
+    <title>Robot Academy</title>
+
+    <!-- 避免重新整理時主題閃爍 -->
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem("robotAcademyTheme");
+                const theme = savedTheme === "light" ? "light" : "dark";
+
+                document.documentElement.dataset.theme = theme;
+            } catch (error) {
+                document.documentElement.dataset.theme = "dark";
+            }
+        })();
+    </script>
+
+    <!-- 樣式檔 -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+    <!-- 背景光暈 -->
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <!-- =====================================================
+         登入／註冊
+    ====================================================== -->
+    <section id="auth-screen" aria-label="帳號登入">
+        <div class="auth-layout">
+            <!-- 品牌介紹 -->
+            <div class="auth-story">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M8 3.5h8M12 3.5V7"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            />
+                            <rect
+                                x="4"
+                                y="7"
+                                width="16"
+                                height="12"
+                                rx="4"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            />
+                            <circle cx="9" cy="12.5" r="1.2" fill="currentColor"/>
+                            <circle cx="15" cy="12.5" r="1.2" fill="currentColor"/>
+                            <path
+                                d="M9 16h6"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div class="brand-name">Robot Academy</div>
+                        <div class="brand-subtitle">Learning Intelligence</div>
+                    </div>
+                </div>
+
+                <div class="auth-copy">
+                    <div class="eyebrow">AI Learning System</div>
+
+                    <h1>
+                        建立知識，<br>
+                        <span>升級你的能力。</span>
+                    </h1>
+
+                    <p>
+                        透過個人化題庫、間隔複習與能力分析，
+                        建立更有效率、更有節奏的學習體驗。
+                    </p>
+                </div>
+
+                <div class="auth-features" aria-label="平台特色">
+                    <span class="auth-feature">智慧題庫</span>
+                    <span class="auth-feature">錯題複習</span>
+                    <span class="auth-feature">能力分析</span>
+                    <span class="auth-feature">學習排行榜</span>
+                </div>
+            </div>
+
+            <!-- 登入面板 -->
+            <div class="auth-panel">
+                <div class="auth-panel-header">
+                    <h2 id="auth-panel-title">歡迎回來</h2>
+                    <p id="auth-panel-description">
+                        登入帳號以繼續你的學習進度。
+                    </p>
+                </div>
+
+                <div class="auth-tabs" role="tablist" aria-label="帳號操作">
+                    <button
+                        id="login-tab"
+                        class="auth-tab active"
+                        type="button"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="login-form"
+                        data-auth-tab="login"
+                    >
+                        登入
+                    </button>
+
+                    <button
+                        id="register-tab"
+                        class="auth-tab"
+                        type="button"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="register-form"
+                        data-auth-tab="register"
+                    >
+                        建立帳號
+                    </button>
+                </div>
+
+                <!-- 狀態訊息 -->
+                <div
+                    id="auth-message"
+                    class="auth-message"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+                <!-- 登入表單 -->
+                <form
+                    id="login-form"
+                    class="auth-form active"
+                    autocomplete="on"
+                    novalidate
+                >
+                    <div class="field">
+                        <label for="login-email">電子郵件</label>
+                        <input
+                            id="login-email"
+                            name="email"
+                            type="email"
+                            inputmode="email"
+                            autocomplete="email"
+                            placeholder="name@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="login-password">密碼</label>
+                        <input
+                            id="login-password"
+                            name="password"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="輸入你的密碼"
+                            minlength="6"
+                            required
+                        >
+                    </div>
+
+                    <button
+                        class="button button-primary auth-submit"
+                        type="submit"
+                    >
+                        登入 Robot Academy
+                    </button>
+                </form>
+
+                <!-- 註冊表單 -->
+                <form
+                    id="register-form"
+                    class="auth-form"
+                    autocomplete="on"
+                    novalidate
+                    hidden
+                >
+                    <div class="field">
+                        <label for="register-name">顯示名稱</label>
+                        <input
+                            id="register-name"
+                            name="name"
+                            type="text"
+                            autocomplete="name"
+                            placeholder="例如：小明"
+                            maxlength="24"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="register-email">電子郵件</label>
+                        <input
+                            id="register-email"
+                            name="email"
+                            type="email"
+                            inputmode="email"
+                            autocomplete="email"
+                            placeholder="name@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="register-password">密碼</label>
+                            <input
+                                id="register-password"
+                                name="password"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="至少 6 個字元"
+                                minlength="6"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="register-confirm-password">
+                                確認密碼
+                            </label>
+                            <input
+                                id="register-confirm-password"
+                                name="confirmPassword"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="再次輸入"
+                                minlength="6"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <button
+                        class="button button-primary auth-submit"
+                        type="submit"
+                    >
+                        建立學習帳號
+                    </button>
+                </form>
+
+                <p class="auth-notice">
+                    此版本使用瀏覽器本機儲存功能保存帳號與學習進度，
+                    不會將資料傳送到外部伺服器。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         主應用程式
+    ====================================================== -->
+    <div id="app-shell" hidden>
+        <!-- 桌面側邊欄 -->
+        <aside class="sidebar" aria-label="主要導覽">
+            <div class="sidebar-brand">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M8 3.5h8M12 3.5V7"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            />
+                            <rect
+                                x="4"
+                                y="7"
+                                width="16"
+                                height="12"
+                                rx="4"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            />
+                            <circle cx="9" cy="12.5" r="1.2" fill="currentColor"/>
+                            <circle cx="15" cy="12.5" r="1.2" fill="currentColor"/>
+                            <path
+                                d="M9 16h6"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div class="brand-name">Robot Academy</div>
+                        <div class="brand-subtitle">Learning System</div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">學習中心</div>
+
+                <button
+                    class="nav-button active"
+                    type="button"
+                    data-route="dashboard"
+                >
+                    <span class="nav-icon" aria-hidden="true">⌂</span>
+                    <span>學習總覽</span>
+                </button>
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-route="learn"
+                >
+                    <span class="nav-icon" aria-hidden="true">◇</span>
+                    <span>開始學習</span>
+                </button>
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-route="review"
+                >
+                    <span class="nav-icon" aria-hidden="true">↻</span>
+                    <span>錯題複習</span>
+                </button>
+
+                <div class="nav-label">社群與帳號</div>
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-route="leaderboard"
+                >
+                    <span class="nav-icon" aria-hidden="true">△</span>
+                    <span>排行榜</span>
+                </button>
+
+                <button
+                    class="nav-button"
+                    type="button"
+                    data-route="profile"
+                >
+                    <span class="nav-icon" aria-hidden="true">○</span>
+                    <span>個人資料</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-spacer"></div>
+
+            <!-- 側邊欄等級進度 -->
+            <div class="sidebar-progress">
+                <div class="sidebar-progress-top">
+                    <span id="sidebar-level">Level 1</span>
+                    <span id="sidebar-xp">0 / 100 XP</span>
+                </div>
+
+                <div
+                    class="progress-track"
+                    role="progressbar"
+                    aria-label="等級經驗值"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                >
+                    <div
+                        id="sidebar-progress-fill"
+                        class="progress-fill"
+                        style="width: 0%"
+                    ></div>
+                </div>
+
+                <div class="sidebar-progress-copy">
+                    <span>目前進度</span>
+                    <span id="sidebar-progress-percent">0%</span>
+                </div>
+            </div>
+
+            <!-- 使用者帳號 -->
+            <button
+                id="sidebar-account"
+                class="sidebar-account"
+                type="button"
+                data-route="profile"
+            >
+                <span
+                    id="sidebar-avatar"
+                    class="avatar"
+                    aria-hidden="true"
+                >
+                    RA
+                </span>
+
+                <span class="account-copy">
+                    <span
+                        id="sidebar-user-name"
+                        class="account-name"
+                    >
+                        Robot Learner
+                    </span>
+
+                    <span
+                        id="sidebar-user-rank"
+                        class="account-rank"
+                    >
+                        新手學員
+                    </span>
+                </span>
+
+                <span aria-hidden="true">›</span>
+            </button>
+        </aside>
+
+        <!-- 主要欄位 -->
+        <div class="app-column">
+            <!-- 頂部工具列 -->
+            <header class="topbar">
+                <div class="mobile-brand" aria-hidden="true">
+                    <div class="brand-mark">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <rect
+                                x="4"
+                                y="7"
+                                width="16"
+                                height="12"
+                                rx="4"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                            />
+                            <circle cx="9" cy="12.5" r="1.2" fill="currentColor"/>
+                            <circle cx="15" cy="12.5" r="1.2" fill="currentColor"/>
+                            <path
+                                d="M9 16h6"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="page-heading">
+                    <h1 id="page-title">學習總覽</h1>
+                    <p id="page-description">
+                        查看今天的任務與學習進度
+                    </p>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="top-status" aria-label="連續學習天數">
+                        <span aria-hidden="true">◆</span>
+                        <span>
+                            連續
+                            <strong id="streak-count">0</strong>
+                            天
+                        </span>
+                    </div>
+
+                    <button
+                        id="theme-toggle"
+                        class="icon-button"
+                        type="button"
+                        aria-label="切換明暗主題"
+                        title="切換明暗主題"
+                    >
+                        <span id="theme-toggle-icon" aria-hidden="true">☾</span>
+                    </button>
+
+                    <button
+                        id="top-profile-button"
+                        class="avatar top-avatar"
+                        type="button"
+                        data-route="profile"
+                        aria-label="開啟個人資料"
+                    >
+                        RA
+                    </button>
+                </div>
+            </header>
+
+            <!-- 動態頁面內容 -->
+            <main
+                id="view-root"
+                tabindex="-1"
+                aria-live="polite"
+            >
+                <div class="view-container">
+                    <div class="empty-state">
+                        <div class="empty-state-icon" aria-hidden="true">◇</div>
+                        <h3>正在載入 Robot Academy</h3>
+                        <p>請稍候，正在準備你的學習空間。</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 手機底部導覽 -->
+            <nav class="mobile-nav" aria-label="手機導覽">
+                <button
+                    class="mobile-nav-button active"
+                    type="button"
+                    data-route="dashboard"
+                >
+                    <span aria-hidden="true">⌂</span>
+                    <span>總覽</span>
+                </button>
+
+                <button
+                    class="mobile-nav-button"
+                    type="button"
+                    data-route="learn"
+                >
+                    <span aria-hidden="true">◇</span>
+                    <span>學習</span>
+                </button>
+
+                <button
+                    class="mobile-nav-button"
+                    type="button"
+                    data-route="review"
+                >
+                    <span aria-hidden="true">↻</span>
+                    <span>複習</span>
+                </button>
+
+                <button
+                    class="mobile-nav-button"
+                    type="button"
+                    data-route="leaderboard"
+                >
+                    <span aria-hidden="true">△</span>
+                    <span>排行</span>
+                </button>
+
+                <button
+                    class="mobile-nav-button"
+                    type="button"
+                    data-route="profile"
+                >
+                    <span aria-hidden="true">○</span>
+                    <span>帳號</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         全域元件容器
+    ====================================================== -->
+
+    <!-- 彈出視窗 -->
+    <div id="modal-root" aria-live="polite"></div>
+
+    <!-- 提示訊息 -->
+    <div
+        id="toast-root"
+        class="toast-root"
+        aria-live="polite"
+        aria-atomic="true"
+    ></div>
+
+    <!-- JavaScript 關閉提示 -->
+    <noscript>
+        <div class="noscript-message">
+            Robot Academy 需要 JavaScript 才能正常運作，
+            請在瀏覽器設定中啟用 JavaScript。
+        </div>
+    </noscript>
+
+    <!-- =====================================================
+         JavaScript 載入順序
+    ====================================================== -->
+    <script src="js/storage.js" defer></script>
+    <script src="data/questions.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/quiz.js" defer></script>
+    <script src="js/app.js" defer></script>
+</body>
+</html>
