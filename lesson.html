@@ -1,40 +1,64 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+  <meta charset="UTF-8">
 
-    <title>課程學習｜Robot Academy</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-    <!-- 共用樣式 -->
-    <link rel="stylesheet" href="./css/variables.css">
-    <link rel="stylesheet" href="./css/layout.css">
-    <link rel="stylesheet" href="./css/components.css">
-    <link rel="stylesheet" href="./css/pages.css">
-    <link rel="stylesheet" href="./css/responsive.css">
+  <meta
+    name="description"
+    content="Robot Academy 機器人與人工智慧課程學習平台"
+  >
 
-    <!-- 課程學習頁專用樣式 -->
-    <link rel="stylesheet" href="./css/lesson.css">
+  <title>課程學習｜Robot Academy</title>
+
+  <!-- 網站共用樣式 -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/pages.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+
+  <!-- 課程頁專用樣式 -->
+  <link rel="stylesheet" href="./css/lesson.css">
 </head>
 
-<body class="lesson-page">
-    <noscript>
-        此頁面需要啟用 JavaScript 才能正常運作。
-    </noscript>
+<body>
+  <!-- JavaScript 會把課程內容放進這個區域 -->
+  <div id="app">
+    <main
+      style="
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        font-family: Arial, 'Microsoft JhengHei', sans-serif;
+      "
+    >
+      <p>正在載入課程內容……</p>
+    </main>
+  </div>
 
-    <div id="app">
-        <main id="lesson-app">
-            <p>課程載入中……</p>
-        </main>
+  <noscript>
+    <div
+      style="
+        padding: 24px;
+        text-align: center;
+        font-family: Arial, 'Microsoft JhengHei', sans-serif;
+      "
+    >
+      這個頁面需要啟用 JavaScript 才能正常使用。
     </div>
+  </noscript>
 
-    <!-- JavaScript -->
-    <script src="./js/data.js" defer></script>
-    <script src="./js/app.js" defer></script>
-    <script src="./js/course.js" defer></script>
-    <script src="./js/lesson.js" defer></script>
+  <!-- 必須先載入課程資料 -->
+  <script src="./js/data.js" defer></script>
+
+  <!-- 再載入課程頁程式 -->
+  <script src="./js/lesson.js" defer></script>
 </body>
 </html>
