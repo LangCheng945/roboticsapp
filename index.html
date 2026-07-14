@@ -174,17 +174,24 @@
     <script src="./js/lesson.js" defer></script>
 
     <script>
-        // 當 DOM 載入完成後執行頁籤切換邏輯
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.academy-auth__tab');
             const loginForm = document.getElementById('login-form');
             const registerForm = document.getElementById('register-form');
             const panelTitle = document.getElementById('auth-panel-title');
             const panelDesc = document.getElementById('auth-panel-description');
+            const authMessage = document.getElementById('auth-message');
+            const authScreen = document.getElementById('auth-screen');
 
+            // 【初始化檢查】如果本機已有登入紀錄，直接隱藏登入遮罩
+            if (localStorage.getItem('robotAcademyCurrentUser')) {
+                authScreen.classList.remove('active');
+                authScreen.style.display = 'none';
+            }
+
+            // 【功能 1】頁籤切換互動
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // 切換頁籤選取狀態
                     tabs.forEach(t => {
                         t.classList.remove('active');
                         t.setAttribute('aria-selected', 'false');
@@ -192,7 +199,6 @@
                     tab.classList.add('active');
                     tab.setAttribute('aria-selected', 'true');
 
-                    // 依據選擇的頁籤切換表單顯示與文字內容
                     const target = tab.getAttribute('data-auth-tab');
                     if (target === 'login') {
                         loginForm.classList.add('active');
@@ -211,8 +217,118 @@
                         panelTitle.textContent = '建立新帳號';
                         panelDesc.textContent = '填寫以下資訊以開始你的智慧學習之旅。';
                     }
+                    if (authMessage) {
+                        authMessage.textContent = '';
+                        authMessage.style.display = 'none';
+                    }
                 });
             });
+
+            // 【功能 2】動態提示訊息渲染器
+            function showMessage(msg, isSuccess = false) {
+                if (!authMessage) return;
+                authMessage.textContent = msg;
+                authMessage.style.display = 'block';
+                authMessage.style.color = isSuccess ? '#10b981' : '#ef4444';
+                authMessage.style.padding = '12px';
+                authMessage.style.borderRadius = '8px';
+                authMessage.style.backgroundColor = isSuccess ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+                authMessage.style.marginBottom = '16px';
+                authMessage.style.textAlign = 'center';
+                authMessage.style.fontSize = '14px';
+                authMessage.style.fontWeight = '500';
+            }
+
+            // 【功能 3】處理本機帳號註冊邏輯 (LocalStorage)
+            if (registerForm) {
+                registerForm.addEventListener('submit', (e) => {
+                    e.preventDefault(); // 阻擋網頁重整
+                    
+                    const name = document.getElementById('register-name').value.trim();
+                    const email = document.getElementById('register-email').value.trim();
+                    const password = document.getElementById('register-password').value;
+                    const confirmPassword = document.getElementById('register-confirm-password').value;
+
+                    if (!name || !email || !password || !confirmPassword) {
+                        showMessage('請完整填寫所有欄位欄位');
+                        return;
+                    }
+
+                    if (password.length < 6) {
+                        showMessage('為了帳號安全，密碼長度至少需要 6 個字元');
+                        return;
+                    }
+
+                    if (password !== confirmPassword) {
+                        showMessage('兩次輸入的密碼不一致，請重新檢查');
+                        return;
+                    }
+
+                    // 讀取目前本機所有已註冊的使用者
+                    let users = JSON.parse(localStorage.getItem('robotAcademyUsers') || '[]');
+                    
+                    // 檢查電子郵件是否重複
+                    if (users.some(u => u.email === email)) {
+                        showMessage('此電子郵件已被註冊過');
+                        return;
+                    }
+
+                    // 寫入新帳號資料
+                    users.push({ name, email, password });
+                    localStorage.setItem('robotAcademyUsers', JSON.stringify(users));
+
+                    showMessage('帳號建立成功！已為您切換至登入頁面', true);
+                    registerForm.reset();
+                    
+                    // 延遲自動跳轉回登入分頁
+                    setTimeout(() => {
+                        const loginTab = document.getElementById('login-tab');
+                        if (loginTab) loginTab.click();
+                    }, 1000);
+                });
+            }
+
+            // 【功能 4】處理本機帳號登入驗證
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault(); // 阻擋網頁重整
+                    
+                    const email = document.getElementById('login-email').value.trim();
+                    const password = document.getElementById('login-password').value;
+
+                    if (!email || !password) {
+                        showMessage('請輸入電子郵件與密碼');
+                        return;
+                    }
+
+                    let users = JSON.parse(localStorage.getItem('robotAcademyUsers') || '[]');
+                    
+                    // 尋找符合信箱與密碼的使用者
+                    const user = users.find(u => u.email === email && u.password === password);
+
+                    if (user) {
+                        showMessage('登入成功！正在初始化學習儀表板...', true);
+                        
+                        // 儲存當前登入之 Session 狀態
+                        localStorage.setItem('robotAcademyCurrentUser', JSON.stringify({ name: user.name, email: user.email }));
+                        
+                        // 動態淡出並隱藏登入遮罩，露出後方主頁面
+                        setTimeout(() => {
+                            authScreen.classList.remove('active');
+                            authScreen.style.display = 'none';
+                            
+                            // 若主程式寫有 refresh 重新整理函式則呼叫，否則直接重新整理載入數據
+                            if (window.RobotAcademy && typeof window.RobotAcademy.refresh === 'function') {
+                                window.RobotAcademy.refresh();
+                            } else {
+                                window.location.reload();
+                            }
+                        }, 1000);
+                    } else {
+                        showMessage('電子郵件或密碼錯誤，請重新輸入');
+                    }
+                });
+            }
         });
     </script>
 </body>
