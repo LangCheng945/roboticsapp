@@ -7,48 +7,31 @@
    1. 全域變數
 ========================================================= */
 
-:root {
-    --color-background: #060915;
-    --color-background-light: #141936;
+:root, html[data-theme="dark"] {
+    /* 網頁大背景：使用極深碳海藍灰，比純黑更有質感 */
+    --color-page: #080b11;
+    
+    /* 卡片與主要區塊：稍微亮一點的灰色，做出懸浮感 */
+    --color-surface: #141823;
+    --color-card: #141823;
 
-    --color-primary: #5b5cf0;
-    --color-primary-dark: #4f46e5;
-    --color-secondary: #754cff;
+    /* 邊框線：精細的灰線 */
+    --color-border: #262c3d;
+    --color-border-light: #1f2433;
 
-    --color-white: #ffffff;
-    --color-card: #ffffff;
+    /* 將原本的品牌主色（按鈕、選中狀態）全部改為純白與亮灰 */
+    --color-primary: #ffffff;          /* 主要按鈕變為耀眼純白 */
+    --color-primary-hover: #e2e8f0;    /* 滑鼠移上去時變微亮灰 */
+    --color-primary-active: #cbd5e1;   /* 點擊時的深灰 */
+    --color-primary-soft: rgba(255, 255, 255, 0.06);   /* 微弱的白色半透明背景 */
+    --color-primary-medium: rgba(255, 255, 255, 0.12); /* 分頁選中時的底色 */
+    --color-primary-border: rgba(255, 255, 255, 0.2);  /* 白色淡邊框 */
 
-    --color-heading: #172033;
-    --color-text: #334155;
-    --color-muted: #64748b;
-    --color-placeholder: #94a3b8;
-
-    --color-border: #cbd5e1;
-    --color-border-light: #e2e8f0;
-
-    --radius-small: 10px;
-    --radius-medium: 14px;
-    --radius-large: 24px;
-
-    --shadow-card:
-        0 30px 80px rgba(0, 0, 0, 0.30),
-        0 6px 24px rgba(0, 0, 0, 0.12);
-
-    --shadow-button:
-        0 10px 24px rgba(91, 92, 240, 0.30);
-
-    --font-family:
-        Inter,
-        "Noto Sans TC",
-        "PingFang TC",
-        "Microsoft JhengHei",
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+    /* 文字顏色調整 */
+    --color-text: #f8fafc;        /* 主文字接近純白 */
+    --color-muted: #8a99ad;       /* 次要文字用優雅的霧灰 */
+    --color-placeholder: #64748b; /* 輸入框提示字 */
 }
-
 /* =========================================================
    2. Reset
 ========================================================= */
