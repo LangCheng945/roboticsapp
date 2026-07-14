@@ -2,18 +2,15 @@
 <html lang="zh-TW" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
     >
-
     <meta name="theme-color" content="#07090f">
     <meta
         name="description"
         content="Robot Academy 智慧機器人學習平台"
     >
-
     <title>Robot Academy</title>
 
     <script>
@@ -21,7 +18,6 @@
             try {
                 const savedTheme = localStorage.getItem("robotAcademyTheme");
                 const theme = savedTheme === "light" ? "light" : "dark";
-
                 document.documentElement.dataset.theme = theme;
             } catch (error) {
                 document.documentElement.dataset.theme = "dark";
@@ -35,6 +31,17 @@
     <link rel="stylesheet" href="./css/pages.css">
     <link rel="stylesheet" href="./css/responsive.css">
     <link rel="stylesheet" href="./css/style.css">
+
+    <style>
+        /* 修正相容性：當登入畫面顯示時，隱藏下方未排版的行動端導覽列，避免擠壓版面 */
+        #auth-screen.active ~ .mobile-nav {
+            display: none !important;
+        }
+        /* 確保註冊表單隱藏時帶有正確的 display 屬性 */
+        .auth-form[hidden] {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -43,7 +50,7 @@
 
     <div id="app" class="app-layout">
         
-        <section id="auth-screen" class="academy-auth" aria-label="帳號登入">
+        <section id="auth-screen" class="academy-auth active" aria-label="帳號登入">
             
             <div class="academy-auth__brand">
                 <div class="academy-auth__brand-inner">
@@ -152,18 +159,11 @@
     </div>
 
     <div id="modal-root" aria-live="polite"></div>
-
-    <div
-        id="toast-root"
-        class="toast-root"
-        aria-live="polite"
-        aria-atomic="true"
-    ></div>
+    <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
 
     <noscript>
         <div class="noscript-message">
-            Robot Academy 需要 JavaScript 才能正常運作，
-            請在瀏覽器設定中啟用 JavaScript。
+            Robot Academy 需要 JavaScript 才能正常運作，請在瀏覽器設定中啟用 JavaScript。
         </div>
     </noscript>
 
@@ -172,6 +172,48 @@
     <script src="./js/dashboard.js" defer></script>
     <script src="./js/course.js" defer></script>
     <script src="./js/lesson.js" defer></script>
-    
+
+    <script>
+        // 當 DOM 載入完成後執行頁籤切換邏輯
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.academy-auth__tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const panelTitle = document.getElementById('auth-panel-title');
+            const panelDesc = document.getElementById('auth-panel-description');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 切換頁籤選取狀態
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+                    tab.classList.add('active');
+                    tab.setAttribute('aria-selected', 'true');
+
+                    // 依據選擇的頁籤切換表單顯示與文字內容
+                    const target = tab.getAttribute('data-auth-tab');
+                    if (target === 'login') {
+                        loginForm.classList.add('active');
+                        loginForm.removeAttribute('hidden');
+                        registerForm.classList.remove('active');
+                        registerForm.setAttribute('hidden', '');
+                        
+                        panelTitle.textContent = '歡迎回來';
+                        panelDesc.textContent = '登入帳號以繼續你的學習進度。';
+                    } else if (target === 'register') {
+                        registerForm.classList.add('active');
+                        registerForm.removeAttribute('hidden');
+                        loginForm.classList.remove('active');
+                        loginForm.setAttribute('hidden', '');
+                        
+                        panelTitle.textContent = '建立新帳號';
+                        panelDesc.textContent = '填寫以下資訊以開始你的智慧學習之旅。';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
