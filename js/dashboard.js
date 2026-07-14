@@ -9,6 +9,9 @@
     const STORAGE_KEY =
         "robotAcademy:dashboardState:v1";
 
+    const CORE_BOOKMARK_KEY =
+        "robot-academy-bookmarks";
+
     const MAX_ACTIVITY_COUNT = 30;
 
     let initialized = false;
@@ -21,10 +24,25 @@
 
     let elements = {};
 
-
     /* ---------------------------------------------------------
        基本工具
     --------------------------------------------------------- */
+
+    const $ = (
+        selector,
+        scope = document
+    ) => {
+        return scope.querySelector(selector);
+    };
+
+    const $$ = (
+        selector,
+        scope = document
+    ) => {
+        return Array.from(
+            scope.querySelectorAll(selector)
+        );
+    };
 
     const clone = (value) => {
         if (value === undefined) {
@@ -150,20 +168,12 @@
             return "";
         }
 
-        const now = new Date();
-
         const difference =
-            now.getTime() -
-            date.getTime();
+            Date.now() - date.getTime();
 
-        const minute =
-            60 * 1000;
-
-        const hour =
-            60 * minute;
-
-        const day =
-            24 * hour;
+        const minute = 60 * 1000;
+        const hour = 60 * minute;
+        const day = 24 * hour;
 
         if (
             difference >= 0 &&
@@ -203,6 +213,244 @@
                 minute: "2-digit"
             }
         ).format(date);
+    };
+
+    const createId = () => {
+        if (
+            window.crypto &&
+            typeof window.crypto.randomUUID ===
+                "function"
+        ) {
+            return window.crypto.randomUUID();
+        }
+
+        return (
+            `activity-${Date.now()}-` +
+            Math.random()
+                .toString(36)
+                .slice(2)
+        );
+    };
+
+    const setTextAll = (
+        selector,
+        value
+    ) => {
+        $$(selector).forEach((element) => {
+            element.textContent =
+                String(value);
+        });
+    };
+
+    const normalizeIdArray = (value) => {
+        if (!Array.isArray(value)) {
+            return [];
+        }
+
+        return [
+            ...new Set(
+                value
+                    .map((item) => {
+                        if (
+                            item &&
+                            typeof item === "object"
+                        ) {
+                            return item.id;
+                        }
+
+                        return item;
+                    })
+                    .filter(Boolean)
+                    .map(String)
+            )
+        ];
+    };
+
+    /* ---------------------------------------------------------
+       API
+    --------------------------------------------------------- */
+
+    const resolveApis = () => {
+        dataApi =
+            window.RobotAcademyData ||
+            window.RobotAcademy?.data ||
+            null;
+
+        courseApi =
+            window.RobotAcademyCourse ||
+            window.RobotAcademy?.course ||
+            null;
+
+        authApi =
+            window.RobotAcademyAuth ||
+            window.RobotAcademy?.auth ||
+            null;
+
+        quizApi =
+            window.RobotAcademyQuiz ||
+            window.RobotAcademy?.quiz ||
+            null;
+    };
+
+    const callSync = (
+        object,
+        methodNames,
+        args = [],
+        fallbackValue = null
+    ) => {
+        if (!object) {
+            return fallbackValue;
+        }
+
+        for (
+            const methodName
+            of methodNames
+        ) {
+            const method =
+                object[methodName];
+
+            if (
+                typeof method !==
+                "function"
+            ) {
+                continue;
+            }
+
+            try {
+                const result =
+                    method.apply(
+                        object,
+                        args
+                    );
+
+                if (
+                    result &&
+                    typeof result.then ===
+                        "function"
+                ) {
+                    continue;
+                }
+
+                return result ??
+                    fallbackValue;
+            } catch (error) {
+                console.warn(
+                    `無法執行 ${methodName}：`,
+                    error
+                );
+            }
+        }
+
+        return fallbackValue;
+    };
+
+    const callAction = async (
+        object,
+        methodNames,
+        args = []
+    ) => {
+        if (!object) {
+            return {
+                called: false,
+                result: null
+            };
+        }
+
+        for (
+            const methodName
+            of methodNames
+        ) {
+            const method =
+                object[methodName];
+
+            if (
+                typeof method !==
+                "function"
+            ) {
+                continue;
+            }
+
+            try {
+                const result =
+                    await method.apply(
+                        object,
+                        args
+                    );
+
+                return {
+                    called: true,
+                    result
+                };
+            } catch (error) {
+                console.error(
+                    `執行 ${methodName} 失敗：`,
+                    error
+                );
+
+                return {
+                    called: true,
+                    result: null,
+                    error
+                };
+            }
+        }
+
+        return {
+            called: false,
+            result: null
+        };
+    };
+
+    /* ---------------------------------------------------------
+       SPA 網址
+    --------------------------------------------------------- */
+
+    const isSpaApplication = () => {
+        return Boolean(
+            document.getElementById(
+                "app-shell"
+            ) &&
+            document.getElementById(
+                "view-root"
+            )
+        );
+    };
+
+    const createSpaUrl = (
+        route,
+        parameters = {}
+    ) => {
+        const search =
+            new URLSearchParams();
+
+        Object.entries(parameters)
+            .forEach(([
+                key,
+                value
+            ]) => {
+                if (
+                    value !== undefined &&
+                    value !== null &&
+                    value !== ""
+                ) {
+                    search.set(
+                        key,
+                        String(value)
+                    );
+                }
+            });
+
+        const query =
+            search.toString();
+
+        return (
+            `#${route}` +
+            (
+                query
+                    ? `?${query}`
+                    : ""
+            )
+        );
     };
 
     const addQueryParameter = (
@@ -269,165 +517,97 @@
         );
     };
 
-    const createId = () => {
-        if (
-            window.crypto &&
-            typeof window.crypto
-                .randomUUID === "function"
-        ) {
-            return window.crypto
-                .randomUUID();
-        }
-
-        return (
-            `activity-${Date.now()}-` +
-            Math.random()
-                .toString(36)
-                .slice(2)
-        );
-    };
-
-    const setTextAll = (
-        selector,
-        value
-    ) => {
-        document
-            .querySelectorAll(selector)
-            .forEach((element) => {
-                element.textContent =
-                    String(value);
-            });
-    };
-
-
-    /* ---------------------------------------------------------
-       API
-    --------------------------------------------------------- */
-
-    const resolveApis = () => {
-        dataApi =
-            window.RobotAcademyData ||
-            window.RobotAcademy?.data ||
-            null;
-
-        courseApi =
-            window.RobotAcademyCourse ||
-            window.RobotAcademy?.course ||
-            null;
-
-        authApi =
-            window.RobotAcademyAuth ||
-            window.RobotAcademy?.auth ||
-            null;
-
-        quizApi =
-            window.RobotAcademyQuiz ||
-            window.RobotAcademy?.quiz ||
-            null;
-    };
-
-    const safeCall = (
-        object,
-        methodNames,
-        fallbackValue = null
-    ) => {
-        if (!object) {
-            return fallbackValue;
-        }
-
-        for (
-            const methodName
-            of methodNames
-        ) {
-            if (
-                typeof object[
-                    methodName
-                ] !== "function"
-            ) {
-                continue;
-            }
-
-            try {
-                const result =
-                    object[
-                        methodName
-                    ]();
-
-                if (
-                    result &&
-                    typeof result.then ===
-                        "function"
-                ) {
-                    continue;
-                }
-
-                return result ??
-                    fallbackValue;
-            } catch (error) {
-                console.warn(
-                    `無法執行 ${methodName}：`,
-                    error
-                );
-            }
-        }
-
-        return fallbackValue;
-    };
-
-
-    /* ---------------------------------------------------------
-       網址
-    --------------------------------------------------------- */
-
     const getCourseDetailUrl = (
         courseId
     ) => {
-        const baseUrl =
+        const configuredUrl =
             document.body?.dataset
-                .courseDetailUrl ||
-            "./course.html";
+                .courseDetailUrl;
+
+        if (configuredUrl) {
+            return addQueryParameter(
+                configuredUrl,
+                "id",
+                courseId
+            );
+        }
+
+        if (isSpaApplication()) {
+            return createSpaUrl(
+                "learn",
+                {
+                    course: courseId
+                }
+            );
+        }
 
         return addQueryParameter(
-            baseUrl,
+            "./course.html",
             "id",
             courseId
         );
     };
 
     const getCourseListUrl = () => {
-        return (
+        const configuredUrl =
             document.body?.dataset
-                .courseListUrl ||
-            "./courses.html"
-        );
+                .courseListUrl;
+
+        if (configuredUrl) {
+            return configuredUrl;
+        }
+
+        if (isSpaApplication()) {
+            return "#learn";
+        }
+
+        return "./courses.html";
     };
 
     const getLessonUrl = (
         courseId
     ) => {
-        const baseUrl =
+        const configuredUrl =
             document.body?.dataset
                 .lessonUrl;
 
-        if (!baseUrl) {
-            return getCourseDetailUrl(
+        if (configuredUrl) {
+            return addQueryParameter(
+                configuredUrl,
+                "course",
                 courseId
             );
         }
 
-        return addQueryParameter(
-            baseUrl,
-            "course",
+        if (isSpaApplication()) {
+            return createSpaUrl(
+                "learn",
+                {
+                    course: courseId,
+                    action: "start"
+                }
+            );
+        }
+
+        return getCourseDetailUrl(
             courseId
         );
     };
 
     const getQuizUrl = () => {
-        return (
+        const configuredUrl =
             document.body?.dataset
-                .quizUrl ||
-            "./quiz.html"
-        );
+                .quizUrl;
+
+        if (configuredUrl) {
+            return configuredUrl;
+        }
+
+        if (isSpaApplication()) {
+            return "#review";
+        }
+
+        return "./quiz.html";
     };
 
     const getTaskUrl = (task) => {
@@ -450,12 +630,11 @@
             );
         }
 
-        return "#";
+        return "#dashboard";
     };
 
-
     /* ---------------------------------------------------------
-       Dashboard 本機狀態
+       Dashboard 狀態
     --------------------------------------------------------- */
 
     const createDefaultState = () => {
@@ -532,10 +711,9 @@
 
         try {
             const rawValue =
-                window.localStorage
-                    .getItem(
-                        STORAGE_KEY
-                    );
+                localStorage.getItem(
+                    STORAGE_KEY
+                );
 
             if (!rawValue) {
                 return defaultState;
@@ -555,18 +733,11 @@
                 taskDate: today,
 
                 completedTasks:
-                    sameDay &&
-                    Array.isArray(
-                        savedState
-                            .completedTasks
-                    )
-                        ? [
-                            ...new Set(
-                                savedState
-                                    .completedTasks
-                                    .map(String)
-                            )
-                        ]
+                    sameDay
+                        ? normalizeIdArray(
+                            savedState
+                                .completedTasks
+                        )
                         : [],
 
                 activities:
@@ -589,7 +760,7 @@
 
     const saveDashboardState = () => {
         try {
-            window.localStorage.setItem(
+            localStorage.setItem(
                 STORAGE_KEY,
                 JSON.stringify(
                     dashboardState
@@ -616,6 +787,17 @@
             dashboardState
                 .activities[0];
 
+        const relatedIdText =
+            String(relatedId || "");
+
+        const latestTime =
+            latestActivity
+                ? new Date(
+                    latestActivity
+                        .createdAt
+                ).getTime()
+                : 0;
+
         const isDuplicate =
             latestActivity &&
             latestActivity.type ===
@@ -623,16 +805,9 @@
             latestActivity.message ===
                 message &&
             latestActivity.relatedId ===
-                String(
-                    relatedId || ""
-                ) &&
-            (
-                Date.now() -
-                new Date(
-                    latestActivity
-                        .createdAt
-                ).getTime()
-            ) < 3000;
+                relatedIdText &&
+            Date.now() - latestTime <
+                3000;
 
         if (isDuplicate) {
             return latestActivity;
@@ -642,10 +817,7 @@
             id: createId(),
             type,
             message,
-            relatedId:
-                String(
-                    relatedId || ""
-                ),
+            relatedId: relatedIdText,
             createdAt:
                 new Date()
                     .toISOString()
@@ -666,19 +838,55 @@
         return activity;
     };
 
-
     /* ---------------------------------------------------------
-       使用者資料
+       使用者
     --------------------------------------------------------- */
 
+    const readStoredUser = () => {
+        const keys = [
+            "robotAcademyCurrentUser",
+            "robot-academy-current-user",
+            "robotAcademy:currentUser"
+        ];
+
+        for (const key of keys) {
+            try {
+                const value =
+                    localStorage.getItem(
+                        key
+                    );
+
+                if (!value) {
+                    continue;
+                }
+
+                const parsed =
+                    JSON.parse(value);
+
+                if (
+                    parsed &&
+                    typeof parsed ===
+                        "object"
+                ) {
+                    return parsed;
+                }
+            } catch {
+                // 繼續檢查下一個 key
+            }
+        }
+
+        return null;
+    };
+
     const getCurrentUser = () => {
-        const user = safeCall(
+        const user = callSync(
             authApi,
             [
                 "getCurrentUser",
                 "getUser",
                 "current"
             ],
+            [],
             null
         );
 
@@ -707,7 +915,7 @@
                 .user;
         }
 
-        return null;
+        return readStoredUser();
     };
 
     const getUserName = (user) => {
@@ -763,10 +971,18 @@
         const greeting =
             getGreeting();
 
+        const avatarText =
+            Array.from(
+                userName.trim()
+            )
+                .slice(0, 2)
+                .join("") || "RA";
+
         setTextAll(
             [
                 "[data-dashboard-user-name]",
-                "#dashboardUserName"
+                "#dashboardUserName",
+                "#sidebar-user-name"
             ].join(", "),
             userName
         );
@@ -787,54 +1003,97 @@
             formatDashboardDate()
         );
 
-        const firstCharacter =
-            Array.from(
-                userName.trim()
-            )[0] || "學";
-
         setTextAll(
             [
                 "[data-dashboard-avatar]",
-                "#dashboardAvatar"
+                "#dashboardAvatar",
+                "#sidebar-avatar",
+                "#top-profile-button"
             ].join(", "),
-            firstCharacter
+            avatarText
         );
     };
-
 
     /* ---------------------------------------------------------
        課程狀態
     --------------------------------------------------------- */
 
-    const getCourseState = () => {
-        if (
-            courseApi &&
-            typeof courseApi
-                .getCourseState ===
-                "function"
-        ) {
-            try {
-                return (
-                    courseApi
-                        .getCourseState() ||
-                    {
-                        favorites: [],
-                        started: [],
-                        progress: {}
-                    }
+    const readCoreBookmarks = () => {
+        try {
+            const value =
+                JSON.parse(
+                    localStorage.getItem(
+                        CORE_BOOKMARK_KEY
+                    ) || "[]"
                 );
-            } catch (error) {
-                console.warn(
-                    "無法取得課程狀態：",
-                    error
-                );
-            }
+
+            return normalizeIdArray(value);
+        } catch {
+            return [];
         }
+    };
+
+    const saveCoreBookmarks = (
+        bookmarks
+    ) => {
+        try {
+            localStorage.setItem(
+                CORE_BOOKMARK_KEY,
+                JSON.stringify(
+                    normalizeIdArray(
+                        bookmarks
+                    )
+                )
+            );
+
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const getCourseState = () => {
+        const rawState = callSync(
+            courseApi,
+            [
+                "getCourseState",
+                "getState"
+            ],
+            [],
+            null
+        );
+
+        const state =
+            rawState &&
+            typeof rawState === "object"
+                ? rawState
+                : {};
+
+        const favorites =
+            normalizeIdArray(
+                state.favorites ||
+                state.bookmarks ||
+                readCoreBookmarks()
+            );
+
+        const started =
+            normalizeIdArray(
+                state.started ||
+                state.enrolled ||
+                state.learning
+            );
+
+        const progress =
+            state.progress &&
+            typeof state.progress ===
+                "object"
+                ? state.progress
+                : {};
 
         return {
-            favorites: [],
-            started: [],
-            progress: {}
+            favorites,
+            started,
+            progress
         };
     };
 
@@ -859,26 +1118,26 @@
     const getCourseProgress = (
         courseId
     ) => {
+        const directProgress =
+            callSync(
+                courseApi,
+                [
+                    "getProgress",
+                    "getCourseProgress"
+                ],
+                [courseId],
+                null
+            );
+
         if (
-            courseApi &&
-            typeof courseApi
-                .getProgress ===
-                "function"
+            directProgress !== null &&
+            directProgress !== undefined
         ) {
-            try {
-                return clamp(
-                    courseApi.getProgress(
-                        courseId
-                    ),
-                    0,
-                    100
-                );
-            } catch (error) {
-                console.warn(
-                    "無法取得課程進度：",
-                    error
-                );
-            }
+            return clamp(
+                directProgress,
+                0,
+                100
+            );
         }
 
         const state =
@@ -897,20 +1156,38 @@
         const state =
             getCourseState();
 
-        return (
-            state.started || []
-        )
+        const progressIds =
+            Object.entries(
+                state.progress
+            )
+                .filter(([
+                    courseId,
+                    progress
+                ]) => {
+                    return (
+                        courseId &&
+                        Number(progress) > 0
+                    );
+                })
+                .map(([
+                    courseId
+                ]) => courseId);
+
+        const courseIds = [
+            ...new Set([
+                ...state.started,
+                ...progressIds
+            ])
+        ];
+
+        return courseIds
             .map(getCourseById)
             .filter(Boolean);
     };
 
     const getFavoriteCourses = () => {
-        const state =
-            getCourseState();
-
-        return (
-            state.favorites || []
-        )
+        return getCourseState()
+            .favorites
             .map(getCourseById)
             .filter(Boolean);
     };
@@ -968,7 +1245,6 @@
             .slice(0, limit);
     };
 
-
     /* ---------------------------------------------------------
        測驗統計
     --------------------------------------------------------- */
@@ -993,13 +1269,14 @@
     };
 
     const getQuizSummary = () => {
-        const rawStats = safeCall(
+        const rawStats = callSync(
             quizApi,
             [
                 "getStats",
                 "getStatistics",
                 "getSummary"
             ],
+            [],
             {}
         );
 
@@ -1050,7 +1327,6 @@
         };
     };
 
-
     /* ---------------------------------------------------------
        今日任務
     --------------------------------------------------------- */
@@ -1072,17 +1348,23 @@
     ) => {
         return dashboardState
             .completedTasks
-            .includes(taskId);
+            .includes(
+                String(taskId)
+            );
     };
 
     const toggleTask = (
         taskId
     ) => {
+        const normalizedTaskId =
+            String(taskId || "");
+
         const task =
             getTasks().find(
                 (item) => {
                     return (
-                        item.id === taskId
+                        item.id ===
+                        normalizedTaskId
                     );
                 }
             );
@@ -1091,49 +1373,50 @@
             return false;
         }
 
-        const completed =
-            isTaskCompleted(taskId);
+        const wasCompleted =
+            isTaskCompleted(
+                normalizedTaskId
+            );
 
-        if (completed) {
+        if (wasCompleted) {
             dashboardState
                 .completedTasks =
                 dashboardState
                     .completedTasks
                     .filter((id) => {
-                        return id !== taskId;
+                        return (
+                            id !==
+                            normalizedTaskId
+                        );
                     });
 
             recordActivity(
                 "task",
                 `取消完成任務「${task.title}」`,
-                taskId
+                normalizedTaskId
             );
         } else {
             dashboardState
-                .completedTasks.push(
-                    taskId
-                );
-
-            dashboardState
                 .completedTasks = [
-                    ...new Set(
-                        dashboardState
-                            .completedTasks
-                    )
+                    ...new Set([
+                        ...dashboardState
+                            .completedTasks,
+                        normalizedTaskId
+                    ])
                 ];
 
             recordActivity(
                 "task",
                 `完成今日任務「${task.title}」`,
-                taskId
+                normalizedTaskId
             );
         }
 
         saveDashboardState();
         renderAll();
 
-        const newCompletedState =
-            !completed;
+        const completed =
+            !wasCompleted;
 
         document.dispatchEvent(
             new CustomEvent(
@@ -1141,20 +1424,22 @@
                 {
                     detail: {
                         task,
-                        completed:
-                            newCompletedState
+                        completed
                     }
                 }
             )
         );
 
         showMessage(
-            newCompletedState
+            completed
                 ? `完成任務，獲得 ${task.points} 點`
-                : "已取消任務完成狀態"
+                : "已取消任務完成狀態",
+            completed
+                ? "success"
+                : "info"
         );
 
-        return newCompletedState;
+        return completed;
     };
 
     const resetTodayTasks = () => {
@@ -1170,9 +1455,8 @@
         return true;
     };
 
-
     /* ---------------------------------------------------------
-       統計資料
+       統計
     --------------------------------------------------------- */
 
     const getSummary = () => {
@@ -1272,6 +1556,60 @@
         };
     };
 
+    const getLearningStreak = () => {
+        const activityDays =
+            new Set(
+                dashboardState
+                    .activities
+                    .map((activity) => {
+                        const date =
+                            new Date(
+                                activity.createdAt
+                            );
+
+                        if (
+                            Number.isNaN(
+                                date.getTime()
+                            )
+                        ) {
+                            return "";
+                        }
+
+                        return getLocalDateKey(
+                            date
+                        );
+                    })
+                    .filter(Boolean)
+            );
+
+        let streak = 0;
+        const current =
+            new Date();
+
+        while (true) {
+            const dateKey =
+                getLocalDateKey(
+                    current
+                );
+
+            if (
+                !activityDays.has(
+                    dateKey
+                )
+            ) {
+                break;
+            }
+
+            streak += 1;
+
+            current.setDate(
+                current.getDate() - 1
+            );
+        }
+
+        return streak;
+    };
+
     const renderStatistics = () => {
         const summary =
             getSummary();
@@ -1321,24 +1659,22 @@
                 `${summary.averageProgress}%`
         };
 
-        document
-            .querySelectorAll(
-                "[data-dashboard-stat]"
-            )
-            .forEach((element) => {
-                const key =
-                    element.dataset
-                        .dashboardStat;
+        $$(
+            "[data-dashboard-stat]"
+        ).forEach((element) => {
+            const key =
+                element.dataset
+                    .dashboardStat;
 
-                if (
-                    Object.prototype
-                        .hasOwnProperty
-                        .call(values, key)
-                ) {
-                    element.textContent =
-                        values[key];
-                }
-            });
+            if (
+                Object.prototype
+                    .hasOwnProperty
+                    .call(values, key)
+            ) {
+                element.textContent =
+                    values[key];
+            }
+        });
 
         setTextAll(
             "[data-dashboard-course-count]",
@@ -1365,22 +1701,20 @@
             values.progress
         );
 
-        document
-            .querySelectorAll(
-                "[data-dashboard-progress-bar]"
-            )
-            .forEach((bar) => {
-                bar.style.width =
-                    `${summary.averageProgress}%`;
+        $$(
+            "[data-dashboard-progress-bar]"
+        ).forEach((bar) => {
+            bar.style.width =
+                `${summary.averageProgress}%`;
 
-                bar.setAttribute(
-                    "aria-valuenow",
-                    String(
-                        summary
-                            .averageProgress
-                    )
-                );
-            });
+            bar.setAttribute(
+                "aria-valuenow",
+                String(
+                    summary
+                        .averageProgress
+                )
+            );
+        });
 
         const taskPercentage =
             summary.totalTasks
@@ -1399,27 +1733,382 @@
             `${taskPercentage}%`
         );
 
-        document
-            .querySelectorAll(
-                "[data-dashboard-task-progress-bar]"
-            )
-            .forEach((bar) => {
-                bar.style.width =
-                    `${taskPercentage}%`;
+        $$(
+            "[data-dashboard-task-progress-bar]"
+        ).forEach((bar) => {
+            bar.style.width =
+                `${taskPercentage}%`;
 
-                bar.setAttribute(
-                    "aria-valuenow",
-                    String(
-                        taskPercentage
-                    )
-                );
-            });
+            bar.setAttribute(
+                "aria-valuenow",
+                String(taskPercentage)
+            );
+        });
+
+        const level =
+            Math.floor(
+                summary.points / 100
+            ) + 1;
+
+        const currentXp =
+            summary.points % 100;
+
+        setTextAll(
+            "#sidebar-level",
+            `Level ${level}`
+        );
+
+        setTextAll(
+            "#sidebar-xp",
+            `${currentXp} / 100 XP`
+        );
+
+        setTextAll(
+            "#sidebar-progress-percent",
+            `${currentXp}%`
+        );
+
+        const sidebarFill =
+            document.getElementById(
+                "sidebar-progress-fill"
+            );
+
+        if (sidebarFill) {
+            sidebarFill.style.width =
+                `${currentXp}%`;
+        }
+
+        const sidebarProgress =
+            document.querySelector(
+                ".sidebar-progress .progress-track"
+            );
+
+        if (sidebarProgress) {
+            sidebarProgress.setAttribute(
+                "aria-valuenow",
+                String(currentXp)
+            );
+        }
+
+        setTextAll(
+            "#streak-count",
+            getLearningStreak()
+        );
+
+        const rank =
+            level >= 10
+                ? "機器人大師"
+                : level >= 5
+                    ? "進階學員"
+                    : level >= 2
+                        ? "初級工程師"
+                        : "新手學員";
+
+        setTextAll(
+            "#sidebar-user-rank",
+            rank
+        );
     };
 
-
     /* ---------------------------------------------------------
-       DOM 元素
+       自動建立 Dashboard 畫面
     --------------------------------------------------------- */
+
+    const getCurrentRoute = () => {
+        const hash =
+            window.location.hash
+                .replace(/^#\/?/, "");
+
+        return (
+            hash.split("?")[0] ||
+            "dashboard"
+        );
+    };
+
+    const isDashboardRoute = () => {
+        return (
+            getCurrentRoute() ===
+            "dashboard"
+        );
+    };
+
+    const createDashboardMarkup = () => {
+        return `
+            <div
+                id="dashboard"
+                class="view-container dashboard-view"
+                data-dashboard
+            >
+                <section class="dashboard-hero">
+                    <div class="dashboard-hero__content">
+                        <div class="eyebrow">
+                            Learning Dashboard
+                        </div>
+
+                        <h2 data-dashboard-greeting>
+                            歡迎回來！
+                        </h2>
+
+                        <p data-dashboard-date></p>
+                    </div>
+
+                    <div class="dashboard-hero__summary">
+                        <span>平均學習進度</span>
+
+                        <strong
+                            data-dashboard-progress-value
+                        >
+                            0%
+                        </strong>
+
+                        <div
+                            class="dashboard-progress"
+                            role="progressbar"
+                            aria-label="平均學習進度"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-valuenow="0"
+                        >
+                            <span
+                                data-dashboard-progress-bar
+                                style="width: 0%"
+                            ></span>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="dashboard-stat-grid"
+                    aria-label="學習統計"
+                >
+                    <article class="dashboard-stat-card">
+                        <span aria-hidden="true">📚</span>
+
+                        <div>
+                            <strong
+                                data-dashboard-stat="started"
+                            >
+                                0
+                            </strong>
+
+                            <p>學習中的課程</p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-stat-card">
+                        <span aria-hidden="true">🏆</span>
+
+                        <div>
+                            <strong
+                                data-dashboard-stat="completed"
+                            >
+                                0
+                            </strong>
+
+                            <p>已完成課程</p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-stat-card">
+                        <span aria-hidden="true">♥</span>
+
+                        <div>
+                            <strong
+                                data-dashboard-stat="favorites"
+                            >
+                                0
+                            </strong>
+
+                            <p>收藏課程</p>
+                        </div>
+                    </article>
+
+                    <article class="dashboard-stat-card">
+                        <span aria-hidden="true">◆</span>
+
+                        <div>
+                            <strong
+                                data-dashboard-stat="points"
+                            >
+                                0
+                            </strong>
+
+                            <p>學習積分</p>
+                        </div>
+                    </article>
+                </section>
+
+                <div class="dashboard-layout">
+                    <div class="dashboard-main">
+                        <section class="dashboard-section">
+                            <header class="dashboard-section__header">
+                                <div>
+                                    <div class="eyebrow">
+                                        Continue Learning
+                                    </div>
+
+                                    <h2>繼續學習</h2>
+                                </div>
+
+                                <a
+                                    href="#learn"
+                                    data-route="learn"
+                                >
+                                    查看全部
+                                </a>
+                            </header>
+
+                            <div
+                                class="dashboard-course-grid"
+                                data-dashboard-continue
+                            ></div>
+                        </section>
+
+                        <section class="dashboard-section">
+                            <header class="dashboard-section__header">
+                                <div>
+                                    <div class="eyebrow">
+                                        Favorites
+                                    </div>
+
+                                    <h2>我的收藏</h2>
+                                </div>
+                            </header>
+
+                            <div
+                                class="dashboard-course-grid"
+                                data-dashboard-favorites
+                            ></div>
+                        </section>
+
+                        <section class="dashboard-section">
+                            <header class="dashboard-section__header">
+                                <div>
+                                    <div class="eyebrow">
+                                        Activity
+                                    </div>
+
+                                    <h2>最近活動</h2>
+                                </div>
+                            </header>
+
+                            <div
+                                class="dashboard-activity-list"
+                                data-dashboard-activities
+                            ></div>
+                        </section>
+                    </div>
+
+                    <aside class="dashboard-side">
+                        <section class="dashboard-section">
+                            <header class="dashboard-section__header">
+                                <div>
+                                    <div class="eyebrow">
+                                        Daily Tasks
+                                    </div>
+
+                                    <h2>今日任務</h2>
+                                </div>
+
+                                <strong
+                                    data-dashboard-stat="tasks"
+                                >
+                                    0/0
+                                </strong>
+                            </header>
+
+                            <div class="dashboard-task-progress">
+                                <div>
+                                    <span>完成進度</span>
+
+                                    <strong
+                                        data-dashboard-task-progress-value
+                                    >
+                                        0%
+                                    </strong>
+                                </div>
+
+                                <div
+                                    class="dashboard-progress"
+                                    role="progressbar"
+                                    aria-label="今日任務完成進度"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    aria-valuenow="0"
+                                >
+                                    <span
+                                        data-dashboard-task-progress-bar
+                                        style="width: 0%"
+                                    ></span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="dashboard-task-list"
+                                data-dashboard-tasks
+                            ></div>
+                        </section>
+
+                        <section class="dashboard-section">
+                            <header class="dashboard-section__header">
+                                <div>
+                                    <div class="eyebrow">
+                                        News
+                                    </div>
+
+                                    <h2>最新公告</h2>
+                                </div>
+                            </header>
+
+                            <div
+                                class="dashboard-announcement-list"
+                                data-dashboard-announcements
+                            ></div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        `;
+    };
+
+    const ensureDashboardMarkup = (
+        force = false
+    ) => {
+        const existing =
+            document.querySelector(
+                [
+                    "[data-dashboard]",
+                    "#dashboard"
+                ].join(",")
+            );
+
+        if (existing) {
+            return existing;
+        }
+
+        if (
+            !force &&
+            !isDashboardRoute()
+        ) {
+            return null;
+        }
+
+        const viewRoot =
+            document.getElementById(
+                "view-root"
+            );
+
+        if (!viewRoot) {
+            return null;
+        }
+
+        viewRoot.innerHTML =
+            createDashboardMarkup();
+
+        return viewRoot.querySelector(
+            "[data-dashboard]"
+        );
+    };
 
     const cacheElements = () => {
         elements = {
@@ -1428,7 +2117,7 @@
                     [
                         "[data-dashboard]",
                         "#dashboard"
-                    ].join(", ")
+                    ].join(",")
                 ),
 
             continueCourses:
@@ -1437,7 +2126,7 @@
                         "[data-dashboard-continue]",
                         "#continueLearning",
                         "#dashboardContinueCourses"
-                    ].join(", ")
+                    ].join(",")
                 ),
 
             favoriteCourses:
@@ -1445,7 +2134,7 @@
                     [
                         "[data-dashboard-favorites]",
                         "#dashboardFavorites"
-                    ].join(", ")
+                    ].join(",")
                 ),
 
             tasks:
@@ -1453,7 +2142,7 @@
                     [
                         "[data-dashboard-tasks]",
                         "#dashboardTasks"
-                    ].join(", ")
+                    ].join(",")
                 ),
 
             announcements:
@@ -1461,7 +2150,7 @@
                     [
                         "[data-dashboard-announcements]",
                         "#dashboardAnnouncements"
-                    ].join(", ")
+                    ].join(",")
                 ),
 
             activities:
@@ -1471,14 +2160,13 @@
                         "[data-dashboard-activity]",
                         "#dashboardActivities",
                         "#dashboardActivity"
-                    ].join(", ")
+                    ].join(",")
                 )
         };
     };
 
-
     /* ---------------------------------------------------------
-       Dashboard 課程卡片
+       課程卡片
     --------------------------------------------------------- */
 
     const createDashboardCourseCard = (
@@ -1490,14 +2178,10 @@
                 course.id
             );
 
-        const courseState =
-            getCourseState();
-
         const favorite =
-            (
-                courseState.favorites ||
-                []
-            ).includes(course.id);
+            getCourseState()
+                .favorites
+                .includes(course.id);
 
         const category =
             course.category ||
@@ -1586,7 +2270,8 @@
                         )}
                         ・
                         ${escapeHTML(
-                            levelLabel
+                            levelLabel ||
+                            ""
                         )}
                     </p>
 
@@ -1630,9 +2315,7 @@
 
                 <div class="dashboard-course-card__progress">
                     <div>
-                        <span>
-                            學習進度
-                        </span>
+                        <span>學習進度</span>
 
                         <strong>
                             ${progress}%
@@ -1781,9 +2464,8 @@
                 .join("");
     };
 
-
     /* ---------------------------------------------------------
-       任務畫面
+       任務
     --------------------------------------------------------- */
 
     const getPriorityLabel = (
@@ -1941,7 +2623,6 @@
                 .join("");
     };
 
-
     /* ---------------------------------------------------------
        公告
     --------------------------------------------------------- */
@@ -2055,7 +2736,6 @@
                 .join("");
     };
 
-
     /* ---------------------------------------------------------
        最近活動
     --------------------------------------------------------- */
@@ -2147,9 +2827,8 @@
                 .join("");
     };
 
-
     /* ---------------------------------------------------------
-       訊息提示
+       Toast
     --------------------------------------------------------- */
 
     const showMessage = (
@@ -2159,13 +2838,37 @@
         const academy =
             window.RobotAcademy || {};
 
+        const normalizedType =
+            type === "error"
+                ? "danger"
+                : type;
+
+        /*
+         * app.js 對外公開的是 RobotAcademy.toast，
+         * 所以優先使用這個 API。
+         */
+        if (
+            typeof academy.toast ===
+            "function"
+        ) {
+            academy.toast(
+                message,
+                {
+                    type: normalizedType,
+                    duration: 2200
+                }
+            );
+
+            return;
+        }
+
         if (
             typeof academy.showToast ===
             "function"
         ) {
             academy.showToast(
                 message,
-                type
+                normalizedType
             );
 
             return;
@@ -2178,7 +2881,7 @@
         ) {
             academy.ui.toast(
                 message,
-                type
+                normalizedType
             );
 
             return;
@@ -2189,9 +2892,7 @@
                 "[data-dashboard-toast]"
             );
 
-        if (oldToast) {
-            oldToast.remove();
-        }
+        oldToast?.remove();
 
         const toast =
             document.createElement("div");
@@ -2201,7 +2902,9 @@
 
         toast.setAttribute(
             "role",
-            "status"
+            normalizedType === "danger"
+                ? "alert"
+                : "status"
         );
 
         toast.textContent = message;
@@ -2217,9 +2920,13 @@
                 padding: "12px 18px",
                 color: "#ffffff",
                 background:
-                    type === "error"
+                    normalizedType ===
+                        "danger"
                         ? "#dc3545"
-                        : "#198754",
+                        : normalizedType ===
+                            "warning"
+                            ? "#d97706"
+                            : "#198754",
                 borderRadius: "10px",
                 boxShadow:
                     "0 8px 24px rgba(0, 0, 0, 0.2)"
@@ -2235,12 +2942,292 @@
         }, 2200);
     };
 
+    /* ---------------------------------------------------------
+       課程操作
+    --------------------------------------------------------- */
+
+    const navigateTo = (
+        url,
+        detail = {}
+    ) => {
+        const navigationEvent =
+            new CustomEvent(
+                "robotacademy:navigate",
+                {
+                    cancelable: true,
+                    detail: {
+                        url,
+                        ...detail
+                    }
+                }
+            );
+
+        const allowed =
+            document.dispatchEvent(
+                navigationEvent
+            );
+
+        if (!allowed) {
+            return;
+        }
+
+        if (
+            String(url).startsWith("#")
+        ) {
+            window.location.hash =
+                String(url).slice(1);
+
+            return;
+        }
+
+        window.location.href = url;
+    };
+
+    const startCourse = async (
+        courseId
+    ) => {
+        const course =
+            getCourseById(courseId);
+
+        if (!course) {
+            showMessage(
+                "找不到這個課程",
+                "danger"
+            );
+
+            return false;
+        }
+
+        const action =
+            await callAction(
+                courseApi,
+                [
+                    "startCourse",
+                    "start",
+                    "enrollCourse",
+                    "enroll"
+                ],
+                [courseId]
+            );
+
+        if (action.error) {
+            showMessage(
+                "無法開始課程，請稍後再試",
+                "danger"
+            );
+
+            return false;
+        }
+
+        document.dispatchEvent(
+            new CustomEvent(
+                "robotacademy:coursestart",
+                {
+                    detail: {
+                        course,
+                        courseId
+                    }
+                }
+            )
+        );
+
+        showMessage(
+            `開始學習「${course.title}」`,
+            "success"
+        );
+
+        navigateTo(
+            getLessonUrl(courseId),
+            {
+                route: "learn",
+                courseId
+            }
+        );
+
+        return true;
+    };
+
+    const toggleFavorite = async (
+        courseId
+    ) => {
+        const course =
+            getCourseById(courseId);
+
+        if (!course) {
+            showMessage(
+                "找不到這個課程",
+                "danger"
+            );
+
+            return false;
+        }
+
+        const wasFavorite =
+            getCourseState()
+                .favorites
+                .includes(courseId);
+
+        const action =
+            await callAction(
+                courseApi,
+                [
+                    "toggleFavorite",
+                    "toggleCourseFavorite",
+                    "toggleBookmark"
+                ],
+                [courseId]
+            );
+
+        let favorite =
+            !wasFavorite;
+
+        if (action.error) {
+            showMessage(
+                "無法更新收藏狀態",
+                "danger"
+            );
+
+            return false;
+        }
+
+        if (!action.called) {
+            const bookmarks =
+                new Set(
+                    readCoreBookmarks()
+                );
+
+            if (wasFavorite) {
+                bookmarks.delete(
+                    courseId
+                );
+            } else {
+                bookmarks.add(
+                    courseId
+                );
+            }
+
+            saveCoreBookmarks(
+                Array.from(bookmarks)
+            );
+        } else if (
+            typeof action.result ===
+            "boolean"
+        ) {
+            favorite =
+                action.result;
+        } else if (
+            action.result &&
+            typeof action.result ===
+                "object" &&
+            typeof action.result.favorite ===
+                "boolean"
+        ) {
+            favorite =
+                action.result.favorite;
+        }
+
+        document.dispatchEvent(
+            new CustomEvent(
+                "robotacademy:favoritechange",
+                {
+                    detail: {
+                        course,
+                        courseId,
+                        favorite
+                    }
+                }
+            )
+        );
+
+        document.dispatchEvent(
+            new CustomEvent(
+                "robotacademy:bookmarkchange",
+                {
+                    detail: {
+                        id: courseId,
+                        active: favorite,
+                        course
+                    }
+                }
+            )
+        );
+
+        showMessage(
+            favorite
+                ? `已收藏「${course.title}」`
+                : `已取消收藏「${course.title}」`,
+            favorite
+                ? "success"
+                : "info"
+        );
+
+        renderAll();
+
+        return favorite;
+    };
 
     /* ---------------------------------------------------------
        畫面更新
     --------------------------------------------------------- */
 
+    const syncDashboardChrome = () => {
+        const title =
+            document.getElementById(
+                "page-title"
+            );
+
+        const description =
+            document.getElementById(
+                "page-description"
+            );
+
+        if (title) {
+            title.textContent =
+                "學習總覽";
+        }
+
+        if (description) {
+            description.textContent =
+                "查看今天的任務與學習進度";
+        }
+
+        $$("[data-route]")
+            .forEach((button) => {
+                const active =
+                    button.dataset.route ===
+                    "dashboard";
+
+                button.classList.toggle(
+                    "active",
+                    active
+                );
+
+                button.classList.toggle(
+                    "is-active",
+                    active
+                );
+
+                if (active) {
+                    button.setAttribute(
+                        "aria-current",
+                        "page"
+                    );
+                } else {
+                    button.removeAttribute(
+                        "aria-current"
+                    );
+                }
+            });
+    };
+
     const renderAll = () => {
+        cacheElements();
+
+        if (!elements.root) {
+            return false;
+        }
+
+        syncDashboardChrome();
         renderUser();
         renderStatistics();
         renderContinueCourses();
@@ -2248,6 +3235,16 @@
         renderTasks();
         renderAnnouncements();
         renderActivities();
+
+        if (
+            typeof window
+                .RobotAcademy
+                ?.refresh === "function"
+        ) {
+            window.RobotAcademy.refresh(
+                elements.root
+            );
+        }
 
         document.dispatchEvent(
             new CustomEvent(
@@ -2260,8 +3257,9 @@
                 }
             )
         );
-    };
 
+        return true;
+    };
 
     /* ---------------------------------------------------------
        全站事件同步
@@ -2278,15 +3276,16 @@
             course?.id;
 
         if (courseId) {
+            const title =
+                course?.title ||
+                getCourseById(
+                    courseId
+                )?.title ||
+                "課程";
+
             recordActivity(
                 "course",
-                `開始學習「${
-                    course?.title ||
-                    getCourseById(
-                        courseId
-                    )?.title ||
-                    "課程"
-                }」`,
+                `開始學習「${title}」`,
                 courseId
             );
         }
@@ -2300,18 +3299,28 @@
         const detail =
             event.detail || {};
 
-        if (detail.favorite) {
+        const courseId =
+            detail.courseId ||
+            detail.id ||
+            detail.course?.id ||
+            "";
+
+        const favorite =
+            detail.favorite ??
+            detail.active;
+
+        if (favorite) {
             const title =
                 detail.course?.title ||
                 getCourseById(
-                    detail.courseId
+                    courseId
                 )?.title ||
                 "課程";
 
             recordActivity(
                 "favorite",
                 `收藏課程「${title}」`,
-                detail.courseId
+                courseId
             );
         }
 
@@ -2324,21 +3333,31 @@
         const detail =
             event.detail || {};
 
+        const progress =
+            Number(
+                detail.progress
+            );
+
+        const courseId =
+            detail.courseId ||
+            detail.course?.id ||
+            "";
+
         if (
-            Number(detail.progress) >=
-            100
+            Number.isFinite(progress) &&
+            progress >= 100
         ) {
             const title =
                 detail.course?.title ||
                 getCourseById(
-                    detail.courseId
+                    courseId
                 )?.title ||
                 "課程";
 
             recordActivity(
                 "complete",
                 `完成課程「${title}」`,
-                detail.courseId
+                courseId
             );
         }
 
@@ -2380,7 +3399,6 @@
         renderAll();
     };
 
-
     /* ---------------------------------------------------------
        事件綁定
     --------------------------------------------------------- */
@@ -2394,7 +3412,7 @@
 
         document.addEventListener(
             "click",
-            (event) => {
+            async (event) => {
                 const target =
                     event.target instanceof
                     Element
@@ -2417,6 +3435,39 @@
                         taskButton.dataset
                             .dashboardTaskToggle
                     );
+
+                    return;
+                }
+
+                const favoriteButton =
+                    target.closest(
+                        "[data-course-favorite]"
+                    );
+
+                if (favoriteButton) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    await toggleFavorite(
+                        favoriteButton.dataset
+                            .courseFavorite
+                    );
+
+                    return;
+                }
+
+                const startButton =
+                    target.closest(
+                        "[data-course-start]"
+                    );
+
+                if (startButton) {
+                    event.preventDefault();
+
+                    await startCourse(
+                        startButton.dataset
+                            .courseStart
+                    );
                 }
             }
         );
@@ -2428,6 +3479,11 @@
 
         document.addEventListener(
             "robotacademy:favoritechange",
+            handleFavoriteChange
+        );
+
+        document.addEventListener(
+            "robotacademy:bookmarkchange",
             handleFavoriteChange
         );
 
@@ -2446,6 +3502,25 @@
             handleQuizComplete
         );
 
+        document.addEventListener(
+            "robotacademy:routechange",
+            (event) => {
+                const route =
+                    event.detail?.route;
+
+                if (
+                    route === "dashboard"
+                ) {
+                    ensureDashboardMarkup(
+                        true
+                    );
+
+                    cacheElements();
+                    renderAll();
+                }
+            }
+        );
+
         [
             "robotacademy:authchange",
             "robotacademy:login",
@@ -2462,6 +3537,22 @@
         });
 
         window.addEventListener(
+            "hashchange",
+            () => {
+                if (
+                    isDashboardRoute()
+                ) {
+                    ensureDashboardMarkup(
+                        true
+                    );
+
+                    cacheElements();
+                    renderAll();
+                }
+            }
+        );
+
+        window.addEventListener(
             "storage",
             (event) => {
                 if (
@@ -2473,11 +3564,19 @@
                 }
 
                 resolveApis();
-                renderAll();
+
+                if (
+                    isDashboardRoute()
+                ) {
+                    ensureDashboardMarkup(
+                        true
+                    );
+
+                    renderAll();
+                }
             }
         );
     };
-
 
     /* ---------------------------------------------------------
        初始化
@@ -2503,9 +3602,13 @@
 
         saveDashboardState();
 
+        ensureDashboardMarkup();
         cacheElements();
         bindEvents();
-        renderAll();
+
+        if (elements.root) {
+            renderAll();
+        }
 
         initialized = true;
 
@@ -2533,22 +3636,33 @@
         dashboardState =
             readDashboardState();
 
+        if (
+            isDashboardRoute()
+        ) {
+            ensureDashboardMarkup(
+                true
+            );
+        }
+
         cacheElements();
-        renderAll();
+
+        if (elements.root) {
+            renderAll();
+        }
 
         return true;
     };
-
 
     /* ---------------------------------------------------------
        公開 API
     --------------------------------------------------------- */
 
     const api = {
-        version: "1.0.0",
+        version: "1.1.0",
 
         init,
         refresh,
+        render: renderAll,
 
         getSummary,
 
@@ -2612,7 +3726,6 @@
 
     window.RobotAcademy.dashboard =
         api;
-
 
     /* ---------------------------------------------------------
        啟動
