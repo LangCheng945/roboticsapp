@@ -155,125 +155,171 @@
                     aria-live="polite"
                 ></div>
 
-                <!-- 登入表單 -->
-                <form
-                    id="login-form"
-                    class="auth-form active"
-                    autocomplete="on"
-                    novalidate
-                >
-                    <div class="field">
-                        <label for="login-email">電子郵件</label>
-                        <input
-                            id="login-email"
-                            name="email"
-                            type="email"
-                            inputmode="email"
-                            autocomplete="email"
-                            placeholder="name@example.com"
-                            required
-                        >
-                    </div>
+               <!-- 右側登入區 -->
+<div class="ra-auth-right">
+    <div class="ra-auth-card">
 
-                    <div class="field">
-                        <label for="login-password">密碼</label>
-                        <input
-                            id="login-password"
-                            name="password"
-                            type="password"
-                            autocomplete="current-password"
-                            placeholder="輸入你的密碼"
-                            minlength="6"
-                            required
-                        >
-                    </div>
-
-                    <button
-                        class="button button-primary auth-submit"
-                        type="submit"
-                    >
-                        登入 Robot Academy
-                    </button>
-                </form>
-
-                <!-- 註冊表單 -->
-                <form
-                    id="register-form"
-                    class="auth-form"
-                    autocomplete="on"
-                    novalidate
-                    hidden
-                >
-                    <div class="field">
-                        <label for="register-name">顯示名稱</label>
-                        <input
-                            id="register-name"
-                            name="name"
-                            type="text"
-                            autocomplete="name"
-                            placeholder="例如：小明"
-                            maxlength="24"
-                            required
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label for="register-email">電子郵件</label>
-                        <input
-                            id="register-email"
-                            name="email"
-                            type="email"
-                            inputmode="email"
-                            autocomplete="email"
-                            placeholder="name@example.com"
-                            required
-                        >
-                    </div>
-
-                    <div class="field-row">
-                        <div class="field">
-                            <label for="register-password">密碼</label>
-                            <input
-                                id="register-password"
-                                name="password"
-                                type="password"
-                                autocomplete="new-password"
-                                placeholder="至少 6 個字元"
-                                minlength="6"
-                                required
-                            >
-                        </div>
-
-                        <div class="field">
-                            <label for="register-confirm-password">
-                                確認密碼
-                            </label>
-                            <input
-                                id="register-confirm-password"
-                                name="confirmPassword"
-                                type="password"
-                                autocomplete="new-password"
-                                placeholder="再次輸入"
-                                minlength="6"
-                                required
-                            >
-                        </div>
-                    </div>
-
-                    <button
-                        class="button button-primary auth-submit"
-                        type="submit"
-                    >
-                        建立學習帳號
-                    </button>
-                </form>
-
-                <p class="auth-notice">
-                    此版本使用瀏覽器本機儲存功能保存帳號與學習進度，
-                    不會將資料傳送到外部伺服器。
-                </p>
-            </div>
+        <div class="ra-auth-heading">
+            <h1>歡迎回來</h1>
+            <p>登入帳號以繼續你的學習進度。</p>
         </div>
+
+        <!-- 保留你原本頁籤按鈕的 ID -->
+        <div class="auth-tabs ra-auth-tabs">
+            <button
+                id="login-tab"
+                class="active"
+                type="button"
+                aria-selected="true"
+            >
+                登入
+            </button>
+
+            <button
+                id="register-tab"
+                type="button"
+                aria-selected="false"
+            >
+                建立帳號
+            </button>
+        </div>
+
+        <!-- 登入表單 -->
+        <form
+            id="login-form"
+            class="auth-form active"
+            autocomplete="on"
+            novalidate
+        >
+            <div class="field">
+                <label for="login-email">
+                    電子郵件
+                </label>
+
+                <input
+                    id="login-email"
+                    name="email"
+                    type="email"
+                    inputmode="email"
+                    autocomplete="email"
+                    placeholder="name@example.com"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label for="login-password">
+                    密碼
+                </label>
+
+                <input
+                    id="login-password"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="輸入你的密碼"
+                    minlength="6"
+                    required
+                >
+            </div>
+
+            <button
+                class="button button-primary auth-submit"
+                type="submit"
+            >
+                登入 Robot Academy
+            </button>
+        </form>
+
+        <!-- 註冊表單 -->
+        <form
+            id="register-form"
+            class="auth-form"
+            autocomplete="on"
+            novalidate
+            hidden
+        >
+            <div class="field">
+                <label for="register-name">
+                    顯示名稱
+                </label>
+
+                <input
+                    id="register-name"
+                    name="name"
+                    type="text"
+                    autocomplete="name"
+                    placeholder="例如：小明"
+                    maxlength="24"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label for="register-email">
+                    電子郵件
+                </label>
+
+                <input
+                    id="register-email"
+                    name="email"
+                    type="email"
+                    inputmode="email"
+                    autocomplete="email"
+                    placeholder="name@example.com"
+                    required
+                >
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label for="register-password">
+                        密碼
+                    </label>
+
+                    <input
+                        id="register-password"
+                        name="password"
+                        type="password"
+                        autocomplete="new-password"
+                        placeholder="至少 6 個字元"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="register-confirm-password">
+                        確認密碼
+                    </label>
+
+                    <input
+                        id="register-confirm-password"
+                        name="confirmPassword"
+                        type="password"
+                        autocomplete="new-password"
+                        placeholder="再次輸入"
+                        minlength="6"
+                        required
+                    >
+                </div>
+            </div>
+
+            <button
+                class="button button-primary auth-submit"
+                type="submit"
+            >
+                建立學習帳號
+            </button>
+        </form>
+
+        <p class="auth-notice ra-auth-note">
+            此版本使用瀏覽器本機儲存功能保存帳號與學習進度，
+            不會將資料傳送到外部伺服器。
+        </p>
+
+    </div>
+</div>
     </section>
 
     <!-- =====================================================
